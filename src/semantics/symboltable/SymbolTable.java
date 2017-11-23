@@ -33,14 +33,17 @@ public class SymbolTable {
 	}
 	
 	public static void reset() {
+		
 		sharedInstance.classTable.clear();
 	}
 	
 	public void addClassScope(String className, ClassScope classScope) {
+		
 		this.classTable.put(className, classScope);
 	}
 	
 	public ClassScope getClassScope(String className) {
+		
 		if(this.containsClassScope(className)) {
 			return this.classTable.get(className);
 		}

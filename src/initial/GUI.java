@@ -19,11 +19,13 @@ import javax.swing.border.LineBorder;
 import javax.swing.text.DefaultHighlighter;
 
 import builder.BuildChecker;
+import console.Output;
 import execution.ExecutionManager;
 import execution.FunctionTracker;
 import scope.LocalScopeCreator;
 import semantics.symboltable.SymbolTable;
 import statements.StatementControlOverseer;
+import ui.fragments.TextEditor;
 import utils.notifications.NotificationCenter;
 import utils.notifications.Notifications;
 
@@ -34,7 +36,7 @@ public class GUI extends JFrame{
     private	App app;
     private JScrollPane inputSb;
     private JScrollPane outputSb;
-    private JTextArea output;
+    private static JTextArea output;
     private JPanel topPanel;
     private JTextArea input;
     private JButton compile;
@@ -43,16 +45,19 @@ public class GUI extends JFrame{
     private TextLineNumber inputLn;
     private TextLineNumber outputLn;
     
+    private TextEditor te;
+    
     private DefaultHighlighter.DefaultHighlightPainter painter;
     
     public GUI() {
     	this.app = new App();
+    	te = new TextEditor();
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  // Exit when close button clicked
         setTitle("JABA Program"); // "this" JFrame sets title
         setLayout(null);
         setResizable(false);
         setLocation(500, 0);
-        setSize(WINDOW_WIDTH, WINDOW_HEIGHT);  // or pack() the components
+        setSize(WINDOW_WIDTH, WINDOW_HEIGHT-50);  // or pack() the components
         init();
         setVisible(true);   // show it
 
@@ -60,7 +65,6 @@ public class GUI extends JFrame{
 
     public static void main(String[] args) {
         //GUISample guiSample = new GUISample();
-        
 		SymbolTable.initialize();
 		BuildChecker.initialize();
 		ExecutionManager.initialize();
@@ -78,9 +82,12 @@ public class GUI extends JFrame{
 		BuildChecker.reset();
 		StatementControlOverseer.reset();
 		FunctionTracker.reset();
+		Output.getInstance().clear();
 	}
     
     public void init() {
+    	
+    	
     	
     	painter = new DefaultHighlighter.DefaultHighlightPainter(Color.RED);
         input = new JTextArea("");
@@ -109,6 +116,7 @@ public class GUI extends JFrame{
             @Override
             public void actionPerformed(ActionEvent e) {
             	
+        		te.onCreateView(input);
             	GUI.performResetComponents();
         		NotificationCenter.getInstance().postNotification(Notifications.ON_BUILD_EVENT);
         		
@@ -121,7 +129,8 @@ public class GUI extends JFrame{
         			System.out.println("ERROR");
         			//Console.log(LogType.ERROR, "Fix identified errors before executing!");
         		}
-            	ExecutionManager.getInstance().executeAllActions();
+        		
+            	
                 //output.setText(app.output(input.getText(), input.getLineCount()));
             }
         });
@@ -133,6 +142,7 @@ public class GUI extends JFrame{
         output.setEditable(false);
         output.setVisible(true);
         output.setWrapStyleWord(true);
+        
         output.addMouseListener(new MouseListener() {
 			
 			
@@ -198,6 +208,7 @@ public class GUI extends JFrame{
         outputLn = new TextLineNumber(output);
         outputLn.setUpdateFont(true);
         output.setFont(new Font("Consolas", Font.PLAIN,14));
+        Output.initialize(output);
         
         inputSb = new JScrollPane(input);
         inputSb.setVisible(true);

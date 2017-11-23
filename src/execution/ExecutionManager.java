@@ -142,9 +142,12 @@ public class ExecutionManager implements NotificationListener {
 	 * This causes the execution thread to temporarily halt until released.
 	 */
 	public void executeAllActions() {
+		
+		
 		this.executionMonitor = new ExecutionMonitor();
 		this.executionThread = new ExecutionThread(this.executionList, this.executionMonitor);
 		this.executionThread.start();
+	
 	}
 	
 	public void clearAllActions() {

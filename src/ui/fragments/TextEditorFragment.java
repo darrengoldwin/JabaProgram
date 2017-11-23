@@ -2,42 +2,26 @@ package ui.fragments;
 
 import com.neildg.mobiprog.MainActivity;
 import com.neildg.mobiprog.R;
-import com.neildg.mobiprog.R.layout;
-import com.neildg.mobiprog.builder.ParserHandler;
-import com.neildg.mobiprog.execution.ExecutionManager;
 import com.neildg.mobiprog.generatedexp.JavaReservedWords;
-import com.neildg.mobiprog.ide.console.Console;
 import com.neildg.mobiprog.io.ClassFileSaver;
-import com.neildg.mobiprog.semantics.statements.StatementControlOverseer;
-import com.neildg.mobiprog.semantics.symboltable.SymbolTableManager;
-import com.neildg.mobiprog.semantics.symboltable.scopes.LocalScopeCreator;
 import com.neildg.mobiprog.templates.CodeTemplates;
-import com.neildg.mobiprog.utils.ApplicationCore;
 import com.neildg.mobiprog.utils.SpaceTokenizer;
-import com.neildg.mobiprog.utils.notifications.NotificationCenter;
-import com.neildg.mobiprog.utils.notifications.NotificationListener;
-import com.neildg.mobiprog.utils.notifications.Notifications;
-import com.neildg.mobiprog.utils.notifications.Parameters;
+import com.sun.glass.ui.View;
 
-import android.app.Activity;
 import android.graphics.Typeface;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.DrawerLayout;
-import android.text.Editable;
-import android.text.TextWatcher;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
-import android.widget.ListView;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.TextView;
-import android.widget.Toast;
+import builder.ParserHandler;
+import utils.ApplicationCore;
+import utils.notifications.NotificationCenter;
+import utils.notifications.NotificationListener;
+import utils.notifications.Notifications;
+import utils.notifications.Parameters;
 
 /**
  * A simple {@link android.support.v4.app.Fragment} subclass. Activities that

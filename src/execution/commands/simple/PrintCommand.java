@@ -7,6 +7,7 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import builder.errorcheckers.UndeclaredChecker;
+import console.Output;
 import execution.commands.ICommand;
 import execution.commands.evaluation.EvaluationCommand;
 import initial.JabaParser.ExpressionContext;
@@ -40,7 +41,7 @@ public class PrintCommand implements ICommand, ParseTreeListener {
 		ParseTreeWalker treeWalker = new ParseTreeWalker();
 		treeWalker.walk(this, this.expressionCtx);
 		
-		//Console.log(LogType.VERBOSE, this.statementToPrint);
+		Output.print(this.statementToPrint);
 		this.statementToPrint = ""; //reset statement to print afterwards
 	}
 

@@ -3,16 +3,16 @@
  */
 package execution.commands.simple;
 
-import javax.management.NotificationListener;
-
-import com.neildg.mobiprog.ui.handlers.ScanUIHandler;
+import javax.management.Notification;
 
 import execution.ExecutionManager;
 import execution.commands.ICommand;
 import representation.MobiValue;
 import representation.MobiValueSearcher;
 import semantic.util.StringUtils;
+import ui.handlers.ScanUIHandler;
 import utils.notifications.NotificationCenter;
+import utils.notifications.NotificationListener;
 import utils.notifications.Notifications;
 import utils.notifications.Parameters;
 

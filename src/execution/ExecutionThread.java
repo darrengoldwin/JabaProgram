@@ -35,13 +35,14 @@ public class ExecutionThread extends Thread {
 	@Override
 	public void run() {
 		try {
+			System.out.println("RUN!");
 			for(ICommand command : this.executionList) {
 				this.executionMonitor.tryExecution();
 				command.execute();
 			}
 		}
 		catch(InterruptedException e) {
-			//Log.e(TAG, "Monitor block interrupted! " +e.getMessage());
+			System.out.println("Monitor block interrupted! " +e.getMessage());
 		}
 		
 		NotificationCenter.getInstance().postNotification(Notifications.ON_EXECUTION_FINISHED);

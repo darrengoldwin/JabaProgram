@@ -33,7 +33,7 @@ public class ExecutionMonitor {
 		
 		try {
 			while(executionFlag == false) {
-				//Log.i(TAG, "Execution flag has been set to false. Execution sleeps!");
+				System.out.println("Execution flag has been set to false. Execution sleeps!");
 				this.executionGate.await();
 			}
 			

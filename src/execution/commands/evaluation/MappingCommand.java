@@ -47,11 +47,11 @@ public class MappingCommand implements ICommand {
 	 */
 	@Override
 	public void execute() {
+		
 		this.modifiedExp = this.parentExprCtx.getText();
 		
 		EvaluationCommand evaluationCommand = new EvaluationCommand(this.parentExprCtx);
 		evaluationCommand.execute();
-		
 		MobiValue mobiValue = VariableSearcher.searchVariable(this.identifierString);
 		AssignmentUtils.assignAppropriateValue(mobiValue, evaluationCommand.getResult());
 	}

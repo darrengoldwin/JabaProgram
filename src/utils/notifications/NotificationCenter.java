@@ -23,7 +23,7 @@ public class NotificationCenter {
 	}
 	
 	public void addObserver(String notificationString, NotificationListener listener) {
-		System.out.println(notificationString);
+		
 		//if there is already an existing key, put listener to array list
 		if(this.notificationMap.containsKey(notificationString)) {
 			ArrayList<NotificationListener> listenerList = this.notificationMap.get(notificationString);
@@ -54,9 +54,11 @@ public class NotificationCenter {
 	}
 	
 	public void postNotification(String notificationString, Parameters parameters) {
+		System.out.println("a " + notificationString);
 		ArrayList<NotificationListener> listenerList = this.notificationMap.get(notificationString);
 		
 		if(listenerList != null) {
+			System.out.println("alist" );
 			for(NotificationListener listener : listenerList) {
 				listener.onNotify(notificationString, parameters);
 			}
@@ -68,7 +70,7 @@ public class NotificationCenter {
 		ArrayList<NotificationListener> listenerList = this.notificationMap.get(notificationString);
 		
 		if(listenerList != null) {
-			System.out.println("list");
+			
 			for(NotificationListener listener : listenerList) {
 				listener.onNotify(notificationString, null);
 			}

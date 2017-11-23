@@ -53,7 +53,7 @@ public class ParserHandler {
 		ParseTreeWalker treeWalker = new ParseTreeWalker();
 		treeWalker.walk(new JavaBaseImplementor(), parserRuleContext);
 
-		//Console.log(LogType.VERBOSE, "Finished parsing. Compiled executables. Click RUN to execute");
+		System.out.println("Finished parsing. Compiled executables. Click RUN to execute");
 	}
 	
 	/*
