@@ -117,7 +117,6 @@ public class GUI extends JFrame{
         compile.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-            	
         		te.onCreateView(code);
             	GUI.performResetComponents();
         		NotificationCenter.getInstance().postNotification(Notifications.ON_BUILD_EVENT);
@@ -132,7 +131,6 @@ public class GUI extends JFrame{
         			//Console.log(LogType.ERROR, "Fix identified errors before executing!");
         		}
         		
-            	
                 //output.setText(app.output(code.getText(), code.getLineCount()));
             }
         });

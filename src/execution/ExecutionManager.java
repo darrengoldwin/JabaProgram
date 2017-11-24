@@ -5,6 +5,7 @@ package execution;
 
 import java.util.ArrayList;
 
+import console.Output;
 import execution.adders.FunctionExecutionAdder;
 import execution.adders.IExecutionAdder;
 import execution.adders.MainExecutionAdder;
@@ -55,7 +56,6 @@ public class ExecutionManager implements NotificationListener {
 		sharedInstance.entryClassName = null;
 		sharedInstance.clearAllActions();
 		
-		NotificationCenter.getInstance().removeObserver(Notifications.ON_EXECUTION_FINISHED, sharedInstance);
 	}
 	
 	/*
@@ -166,6 +166,7 @@ public class ExecutionManager implements NotificationListener {
 	@Override
 	public void onNotify(String notificationString, Parameters params) {
 		if(notificationString == Notifications.ON_EXECUTION_FINISHED) {
+			Output.getInstance().printa("<<<<terminate>>>>");
 			//SymbolTableManager.getInstance().resetClassTables(); //TODO: does not work as intended
 		}
 	}

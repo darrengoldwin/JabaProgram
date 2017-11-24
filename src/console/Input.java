@@ -63,6 +63,7 @@ public class Input implements NotificationListener{
 		
 		Parameters param = new Parameters();
 		System.out.println(input.getText().toString());
+		Output.getInstance().print(input.getText().toString());
 		param.putExtra(VALUE_ENTERED_KEY, input.getText().toString());
 		
 		return param;

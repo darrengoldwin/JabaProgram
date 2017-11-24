@@ -102,6 +102,7 @@ public class ArrayAnalyzer implements ParseTreeListener{
 				String arrayIdentifierString = this.identifiedTokens.getToken(ARRAY_IDENTIFIER_KEY);
 				
 				//initialize an array mobivalue
+				
 				this.declaredArray = MobiArray.createArray(arrayTypeString, arrayIdentifierString);
 				MobiValue mobiValue = new MobiValue(this.declaredArray, PrimitiveType.ARRAY);
 				
