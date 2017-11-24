@@ -22,6 +22,7 @@ public class MainExecutionAdder implements IExecutionAdder {
 	
 	@Override
 	public void addCommand(ICommand command) {
+		System.out.println(command.getClass().toGenericString());
 		this.mainExecutionList.add(command);
 	}
 

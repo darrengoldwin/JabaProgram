@@ -16,7 +16,6 @@ public class TextEditor implements NotificationListener{
 	public final static String TEXT_READ_KEY = "TEXT_READ_KEY";
 	
 	public TextEditor() {
-		System.out.println("Shabuya");
 		NotificationCenter.getInstance().addObserver(Notifications.ON_BUILD_EVENT, this);
 		NotificationCenter.getInstance().addObserver(Notifications.ON_NEW_CLASS_CREATED, this);
 		NotificationCenter.getInstance().addObserver(Notifications.ON_CLASS_LOADED, this);
@@ -44,7 +43,6 @@ public class TextEditor implements NotificationListener{
 
 	private void compileAndParseText() {
 		String textRead = this.textEditorView.getText().toString();
-		System.out.println(textRead);
 		ParserHandler.getInstance().parseText(this.classNameText, textRead);
 	}
 	

@@ -17,6 +17,7 @@ public class IdentifierMapper implements IValueMapper{
 	private final static String TAG = "MobiProg_IdentifierMapper";
 	
 	private IValueMapper valueMapper;
+	final int JUNGLE_CUBES = 1;
 	
 	public IdentifierMapper(String originalExp) {
 		if(FunctionTracker.getInstance().isInsideFunction()) {

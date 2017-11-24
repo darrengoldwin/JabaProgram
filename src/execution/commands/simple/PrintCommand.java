@@ -41,7 +41,7 @@ public class PrintCommand implements ICommand, ParseTreeListener {
 		ParseTreeWalker treeWalker = new ParseTreeWalker();
 		treeWalker.walk(this, this.expressionCtx);
 		
-		Output.print(this.statementToPrint);
+		Output.getInstance().print(this.statementToPrint);
 		this.statementToPrint = ""; //reset statement to print afterwards
 	}
 

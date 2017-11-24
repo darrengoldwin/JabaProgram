@@ -49,7 +49,7 @@ public class MappingCommand implements ICommand {
 	public void execute() {
 		
 		this.modifiedExp = this.parentExprCtx.getText();
-		
+		System.out.println(this.modifiedExp);
 		EvaluationCommand evaluationCommand = new EvaluationCommand(this.parentExprCtx);
 		evaluationCommand.execute();
 		MobiValue mobiValue = VariableSearcher.searchVariable(this.identifierString);

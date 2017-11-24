@@ -109,7 +109,7 @@ public class FieldAnalyzer implements ParseTreeListener {
 			String identifierValueString = null;
 			
 			//Console.log(LogType.DEBUG, "Class modifier: " +classModifierString);
-			
+			//System.out.println("class: " +  classModifierString + " type: " + primitiveTypeString);
 			if(this.identifiedTokens.containsTokens(ClassAnalyzer.IDENTIFIER_VALUE_KEY)) {
 				identifierValueString = this.identifiedTokens.getToken(ClassAnalyzer.IDENTIFIER_VALUE_KEY);
 				this.declaredClassScope.addInitializedVariableFromKeywords(classModifierString, primitiveTypeString, identifierString, identifierValueString);

@@ -7,14 +7,10 @@ public class JabaProgram {
 
 	
 	void main() {
-		int c = 5 + 1;
-		print(c);
-		for(int i =0; i< 4; i++){
-			c= c+i;
-			print(c);
-		}
-
-		print(i);
+		int c = 5;
+		String s ="dog";
+		
+		print(s);
 
 			
 	}

@@ -3,14 +3,13 @@
  */
 package execution.commands.simple;
 
-import javax.management.Notification;
-
+import console.Input;
+import console.Output;
 import execution.ExecutionManager;
 import execution.commands.ICommand;
 import representation.MobiValue;
 import representation.MobiValueSearcher;
 import semantic.util.StringUtils;
-import ui.handlers.ScanUIHandler;
 import utils.notifications.NotificationCenter;
 import utils.notifications.NotificationListener;
 import utils.notifications.Notifications;
@@ -37,23 +36,28 @@ public class ScanCommand implements ICommand, NotificationListener{
 	}
 	@Override
 	public void execute() {
+		
 		NotificationCenter.getInstance().addObserver(Notifications.ON_SCAN_DIALOG_DISMISSED, this); //add an observer to listen to when the dialog has been dismissed
 		
 		Parameters params = new Parameters();
 		params.putExtra(MESSAGE_DISPLAY_KEY, this.messageToDisplay);
+		Output.getInstance().print(params.getStringExtra(MESSAGE_DISPLAY_KEY, ""));
 		
 		ExecutionManager.getInstance().blockExecution();
 		NotificationCenter.getInstance().postNotification(Notifications.ON_FOUND_SCAN_STATEMENT, params);
+		
+		
 	}
 	
 	private void acquireInputFromUser(Parameters params) {
-		String valueEntered = params.getStringExtra(ScanUIHandler.VALUE_ENTERED_KEY, "");
+		String valueEntered = params.getStringExtra(Input.VALUE_ENTERED_KEY, "");
 		
 		MobiValue mobiValue = MobiValueSearcher.searchMobiValue(identifier);
 		mobiValue.setValue(valueEntered);
 		
 		NotificationCenter.getInstance().removeObserver(Notifications.ON_SCAN_DIALOG_DISMISSED, this); //remove observer after using
 		ExecutionManager.getInstance().resumeExecution(); //resume execution of thread.
+		Input.getInstance().close();
 	}
 	
 	@Override
@@ -61,6 +65,7 @@ public class ScanCommand implements ICommand, NotificationListener{
 		if(notificationString == Notifications.ON_SCAN_DIALOG_DISMISSED) {
 			this.acquireInputFromUser(params);
 		}
+		
 	}
 
 }

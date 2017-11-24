@@ -127,6 +127,7 @@ public class ExecutionManager implements NotificationListener {
 	 * Blocks the execution of the thread. Can only be called once. At this point, resumeExecution() must be called by a specific command.
 	 */
 	public void blockExecution() {
+		System.out.println("BLOCK!");
 		this.executionMonitor.claimExecutionFlag();
 	}
 	
@@ -134,6 +135,7 @@ public class ExecutionManager implements NotificationListener {
 	 * Resumes the execution of thread. Can only be called once. At this point, the execution thread should continue to do other actions.
 	 */
 	public void resumeExecution() {
+		System.out.println("Resume");
 		this.executionMonitor.releaseExecutionFlag();
 	}
 	

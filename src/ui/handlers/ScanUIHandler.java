@@ -3,17 +3,15 @@
  */
 package ui.handlers;
 
-import com.neildg.mobiprog.execution.commands.simple.ScanCommand;
-import com.neildg.mobiprog.ui.fragments.ScanDialogFragment;
-import com.neildg.mobiprog.ui.fragments.ScanDialogFragment.ScanDialogListener;
-import com.neildg.mobiprog.utils.ApplicationCore;
-import com.neildg.mobiprog.utils.notifications.NotificationCenter;
-import com.neildg.mobiprog.utils.notifications.NotificationListener;
-import com.neildg.mobiprog.utils.notifications.Notifications;
-import com.neildg.mobiprog.utils.notifications.Parameters;
-
 import android.app.Activity;
-import android.content.Context;
+import execution.commands.simple.ScanCommand;
+import ui.fragments.ScanDialogFragment;
+import ui.fragments.ScanDialogFragment.ScanDialogListener;
+import utils.ApplicationCore;
+import utils.notifications.NotificationCenter;
+import utils.notifications.NotificationListener;
+import utils.notifications.Notifications;
+import utils.notifications.Parameters;
 
 /**
  * Whenever a scan statement is seen, this component handles the creation of the appropriate UI
@@ -27,7 +25,6 @@ public class ScanUIHandler implements ScanDialogListener, NotificationListener {
 	
 	private final static String TAG = "MobiProg_ScanUIHandler";
 	
-	private Activity mainActivity;
 	
 	private ScanDialogFragment scanDialog;
 	
@@ -36,11 +33,11 @@ public class ScanUIHandler implements ScanDialogListener, NotificationListener {
 	}
 	
 	public void initialize() {
-		NotificationCenter.getInstance().addObserver(Notifications.ON_FOUND_SCAN_STATEMENT, this);
+		//NotificationCenter.getInstance().addObserver(Notifications.ON_FOUND_SCAN_STATEMENT, this);
 	}
 	
 	public void destroy() {
-		NotificationCenter.getInstance().removeObserver(Notifications.ON_FOUND_SCAN_STATEMENT, this);
+		//NotificationCenter.getInstance().removeObserver(Notifications.ON_FOUND_SCAN_STATEMENT, this);
 	}
 	
 	private void showScanDialog(Parameters params) {
@@ -58,7 +55,7 @@ public class ScanUIHandler implements ScanDialogListener, NotificationListener {
 		Parameters params = new Parameters();
 		params.putExtra(VALUE_ENTERED_KEY, dialogFragment.getValueEntered());
 		
-		NotificationCenter.getInstance().postNotification(Notifications.ON_SCAN_DIALOG_DISMISSED, params); //report back results to scan command
+		//NotificationCenter.getInstance().postNotification(Notifications.ON_SCAN_DIALOG_DISMISSED, params); //report back results to scan command
 		dialogFragment.dismiss();
 	}
 

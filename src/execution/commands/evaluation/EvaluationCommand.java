@@ -44,6 +44,7 @@ public class EvaluationCommand implements ICommand, ParseTreeListener {
 	 */
 	@Override
 	public void execute() {
+		System.out.println(TAG);
 		this.modifiedExp = this.parentExprCtx.getText();
 
 		//catch rules if the value has direct boolean flags

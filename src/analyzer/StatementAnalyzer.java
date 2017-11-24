@@ -168,6 +168,7 @@ public class StatementAnalyzer {
 	}
 	
 	private void handleScanStatement(StatementContext ctx) {
+		System.out.println(ctx.StringLiteral().getText());
 		ScanCommand scanCommand = new ScanCommand(ctx.StringLiteral().getText(), ctx.Identifier().getText());
 		UndeclaredChecker.verifyVarOrConstForScan(ctx.Identifier().getText(), ctx);
 		

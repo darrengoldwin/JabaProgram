@@ -154,6 +154,7 @@ public class LocalVariableAnalyzer implements ParseTreeListener {
 	 * Otherwise, it proceeds normally.
 	 */
 	private void processMapping(VariableDeclaratorContext varCtx) {
+		
 		if(this.executeMappingImmediate) {
 			MappingCommand mappingCommand = new MappingCommand(varCtx.variableDeclaratorId().getText(), varCtx.variableInitializer().expression());
 			mappingCommand.execute();

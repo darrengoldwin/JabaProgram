@@ -65,6 +65,7 @@ public class AssignmentCommand implements ICommand{
 	 */
 	@Override
 	public void execute() {
+		System.out.println(TAG);
 		EvaluationCommand evaluationCommand = new EvaluationCommand(this.rightHandExprCtx);
 		evaluationCommand.execute();
 		

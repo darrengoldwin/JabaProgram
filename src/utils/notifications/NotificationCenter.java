@@ -58,10 +58,12 @@ public class NotificationCenter {
 		ArrayList<NotificationListener> listenerList = this.notificationMap.get(notificationString);
 		
 		if(listenerList != null) {
-			System.out.println("alist" );
-			for(NotificationListener listener : listenerList) {
+			for(int i =0; i< listenerList.size(); i++) {
+				NotificationListener listener = listenerList.get(i);
 				listener.onNotify(notificationString, parameters);
+				
 			}
+
 		}
 	}
 	
@@ -70,7 +72,6 @@ public class NotificationCenter {
 		ArrayList<NotificationListener> listenerList = this.notificationMap.get(notificationString);
 		
 		if(listenerList != null) {
-			
 			for(NotificationListener listener : listenerList) {
 				listener.onNotify(notificationString, null);
 			}

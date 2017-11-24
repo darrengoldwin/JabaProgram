@@ -9,7 +9,7 @@ import java.awt.event.MouseListener;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
+import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.border.Border;
@@ -19,6 +19,7 @@ import javax.swing.border.LineBorder;
 import javax.swing.text.DefaultHighlighter;
 
 import builder.BuildChecker;
+import console.Input;
 import console.Output;
 import execution.ExecutionManager;
 import execution.FunctionTracker;
@@ -34,20 +35,24 @@ public class GUI extends JFrame{
     public static final int WINDOW_HEIGHT = 750;
     
     private	App app;
+    private JScrollPane codeSb;
     private JScrollPane inputSb;
     private JScrollPane outputSb;
     private static JTextArea output;
-    private JPanel topPanel;
-    private JTextArea input;
+    private static JTextArea input;
     private JButton compile;
     private JTextArea code;
-    private JButton button;
-    private TextLineNumber inputLn;
+    private static JButton submit;
+    private TextLineNumber codeLn;
     private TextLineNumber outputLn;
+    private TextLineNumber inputLn;
+    private JLabel inputLbl;
+    private JLabel outputLbl;
     
     private TextEditor te;
     
     private DefaultHighlighter.DefaultHighlightPainter painter;
+    
     
     public GUI() {
     	this.app = new App();
@@ -83,22 +88,20 @@ public class GUI extends JFrame{
 		StatementControlOverseer.reset();
 		FunctionTracker.reset();
 		Output.getInstance().clear();
+		Input.getInstance().clear();
 	}
     
     public void init() {
     	
-    	
-    	
     	painter = new DefaultHighlighter.DefaultHighlightPainter(Color.RED);
-        input = new JTextArea("");
-        input.setVisible(true);
-        input.setBackground(new java.awt.Color(164, 231, 223));
-        input.setBorder(BorderFactory.createLineBorder(Color.black));
-        input.setWrapStyleWord(true);
-        inputLn = new TextLineNumber(input);
-        inputLn.setUpdateFont(true);
-        input.setFont(new Font("Consolas", Font.PLAIN,14));
-        
+        code = new JTextArea("");
+        code.setVisible(true);
+        code.setBackground(new java.awt.Color(164, 231, 223));
+        code.setBorder(BorderFactory.createLineBorder(Color.black));
+        code.setWrapStyleWord(true);
+        codeLn = new TextLineNumber(code);
+        codeLn.setUpdateFont(true);
+        code.setFont(new Font("Consolas", Font.PLAIN,14));
         
         compile = new JButton();
         compile.setText("Compile");
@@ -109,14 +112,13 @@ public class GUI extends JFrame{
         Border margin = new EmptyBorder(5, 15, 5, 15);
         Border compound = new CompoundBorder(line, margin);
         compile.setBorder(compound);
-        compile.setBounds(37,600,802,50);
+        compile.setBounds(35,620,374,50);
         compile.setFont(new Font("Consolas", Font.PLAIN,14));
-        
         compile.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
             	
-        		te.onCreateView(input);
+        		te.onCreateView(code);
             	GUI.performResetComponents();
         		NotificationCenter.getInstance().postNotification(Notifications.ON_BUILD_EVENT);
         		
@@ -131,18 +133,50 @@ public class GUI extends JFrame{
         		}
         		
             	
-                //output.setText(app.output(input.getText(), input.getLineCount()));
+                //output.setText(app.output(code.getText(), code.getLineCount()));
             }
         });
         this.add(compile);
 
+        submit = new JButton();
+        submit.setText("Submit");
+        submit.setVisible(true);
+        submit.setForeground(Color.BLACK);
+        submit.setBackground(Color.WHITE);
+        submit.setBorder(compound);
+        submit.setBounds(455,620,384,50);
+        submit.setFont(new Font("Consolas", Font.PLAIN,14));
+        submit.setEnabled(false);
+        submit.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				// TODO Auto-generated method stub
+				System.out.println("BUTTON");
+				NotificationCenter.getInstance().postNotification(Notifications.ON_SCAN_DIALOG_DISMISSED, Input.getInstance().getMessage());
+			}
+		});
+        
+        this.add(submit);
+        
+        outputLbl = new JLabel("Output: ");
+        outputLbl.setBounds(35, 300, 100, 20);
+        outputLbl.setFont(new Font("Consolas", Font.PLAIN,14));
+        outputLbl.setVisible(true);
+        this.add(outputLbl);
+        
+        inputLbl = new JLabel("Input: ");
+        inputLbl.setBounds(455, 300, 100, 20);
+        inputLbl.setFont(new Font("Consolas", Font.PLAIN,14));
+        inputLbl.setVisible(true);
+        this.add(inputLbl);
+        
         output = new JTextArea("");
         output.setBackground(new java.awt.Color(255, 209, 220));
         output.setBorder(BorderFactory.createLineBorder(Color.black));
         output.setEditable(false);
         output.setVisible(true);
         output.setWrapStyleWord(true);
-        
         output.addMouseListener(new MouseListener() {
 			
 			
@@ -152,7 +186,7 @@ public class GUI extends JFrame{
 				try {
 					
 					String[] arr = output.getText().split("\n");
-					input.getHighlighter().removeAllHighlights();
+					code.getHighlighter().removeAllHighlights();
 					int startIndex= 0;
 					int endIndex = 0;
 					int lineNumber =0;
@@ -168,14 +202,14 @@ public class GUI extends JFrame{
 							break;
 						}
 					}
-					arr = input.getText().split("\n");
+					arr = code.getText().split("\n");
 					
-					startIndex= input.getLineStartOffset(lineNumber);
-					endIndex = input.getLineEndOffset(lineNumber);
+					startIndex= code.getLineStartOffset(lineNumber);
+					endIndex = code.getLineEndOffset(lineNumber);
 					
 					System.out.println(startIndex + " " + endIndex);
-					input.setCaretPosition(startIndex);
-		        	input.getHighlighter().addHighlight(startIndex, endIndex, painter);
+					code.setCaretPosition(startIndex);
+		        	code.getHighlighter().addHighlight(startIndex, endIndex, painter);
 		        }catch(Exception ex) {
 		        	
 		        }
@@ -205,23 +239,42 @@ public class GUI extends JFrame{
 				
 			}
 		});
-        outputLn = new TextLineNumber(output);
-        outputLn.setUpdateFont(true);
         output.setFont(new Font("Consolas", Font.PLAIN,14));
         Output.initialize(output);
         
-        inputSb = new JScrollPane(input);
-        inputSb.setVisible(true);
-        inputSb.setBounds(0,0, 840, 300);
-        inputSb.setRowHeaderView(inputLn);
-        this.add(inputSb);
+        input = new JTextArea("");
+        input.setBackground(new java.awt.Color(255, 209, 220));
+        input.setBorder(BorderFactory.createLineBorder(Color.black));
+        input.setVisible(true);
+        input.setWrapStyleWord(true);
+        input.setFont(new Font("Consolas", Font.PLAIN,14));
+        input.setEnabled(false);
+        Input.initialize(input, submit);
         
+        outputLn = new TextLineNumber(output);
+        outputLn.setUpdateFont(true);
+        
+        inputLn = new TextLineNumber(input);
+        inputLn.setUpdateFont(true);
+        
+        
+        codeSb = new JScrollPane(code);
+        codeSb.setVisible(true);
+        codeSb.setBounds(0,0, 840, 300);
+        codeSb.setRowHeaderView(codeLn);
+        this.add(codeSb);
 
         outputSb = new JScrollPane(output);
         outputSb.setVisible(true);
-        outputSb.setBounds(0,301,840,300);
+        outputSb.setBounds(0,321,410,300);
         outputSb.setRowHeaderView(outputLn);
         this.add(outputSb);
+        
+        inputSb = new JScrollPane(input);
+        inputSb.setVisible(true);
+        inputSb.setBounds(420,321,420,300);
+        inputSb.setRowHeaderView(inputLn);
+        this.add(inputSb);
 
     }
 }
