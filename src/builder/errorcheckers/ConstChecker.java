@@ -52,6 +52,7 @@ public class ConstChecker implements IErrorChecker, ParseTreeListener {
 
 	@Override
 	public void enterEveryRule(ParserRuleContext ctx) {
+		
 		if(ctx instanceof ExpressionContext) {
 			ExpressionContext exprCtx = (ExpressionContext) ctx;
 			if(EvaluationCommand.isVariableOrConst(exprCtx)) {
@@ -59,6 +60,8 @@ public class ConstChecker implements IErrorChecker, ParseTreeListener {
 				this.verifyVariableOrConst(exprCtx);
 			}
 		}
+		
+		//if(ctx instance of )
 	}
 
 	@Override
@@ -67,9 +70,9 @@ public class ConstChecker implements IErrorChecker, ParseTreeListener {
 		
 	}
 	
-	private void verifyVariableOrConst(ExpressionContext varExprCtx) {
+	public void verifyVariableOrConst(ExpressionContext varExprCtx) {
 		MobiValue mobiValue = null;
-		System.out.println("EEE " + varExprCtx.primary().Identifier().getText());
+		
 		if(ExecutionManager.getInstance().isInFunctionExecution()) {
 			MobiFunction mobiFunction = ExecutionManager.getInstance().getCurrentFunction();
 			mobiValue = VariableSearcher.searchVariableInFunction(mobiFunction, varExprCtx.primary().Identifier().getText());

@@ -3,6 +3,7 @@
  */
 package execution.commands.simple;
 
+import builder.errorcheckers.ConstChecker;
 import execution.commands.ICommand;
 import initial.JabaLexer;
 import initial.JabaParser.ExpressionContext;
@@ -24,6 +25,9 @@ public class IncDecCommand implements ICommand {
 	public IncDecCommand(ExpressionContext exprCtx, int tokenSign) {
 		this.exprCtx = exprCtx;
 		this.tokenSign = tokenSign;
+		System.out.println(this.exprCtx);
+		ConstChecker constChecker = new ConstChecker(this.exprCtx);
+		constChecker.verify();
 	}
 	
 	/* (non-Javadoc)
@@ -39,8 +43,13 @@ public class IncDecCommand implements ICommand {
 		leftHandMapper.analyze(this.exprCtx);
 
 		MobiValue mobiValue = leftHandMapper.getMobiValue();
+		if(!mobiValue.isFinal()) {
+			this.performOperation(mobiValue);
+		}else
+		{
+			
+		}
 		
-		this.performOperation(mobiValue);
 	}
 	
 	/*

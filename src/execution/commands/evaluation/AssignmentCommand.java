@@ -33,7 +33,7 @@ public class AssignmentCommand implements ICommand{
 		this.leftHandExprCtx = leftHandExprCtx;
 		this.rightHandExprCtx = rightHandExprCtx;
 		
-		
+		System.out.println("RAWRARWA");
 		UndeclaredChecker undeclaredChecker = new UndeclaredChecker(this.leftHandExprCtx);
 		undeclaredChecker.verify();
 		
@@ -71,9 +71,11 @@ public class AssignmentCommand implements ICommand{
 		evaluationCommand.execute();
 		
 		if(this.isLeftHandArrayAccessor()) {
+			
 			this.handleArrayAssignment(evaluationCommand.getResult().toEngineeringString());
 		}
 		else {
+			
 			MobiValue mobiValue = VariableSearcher.searchVariable(this.leftHandExprCtx.getText());
 			AssignmentUtils.assignAppropriateValue(mobiValue, evaluationCommand.getResult());
 		}
