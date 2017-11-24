@@ -2,6 +2,7 @@ package representation;
 
 import java.io.Console;
 
+import console.Output;
 import representation.MobiValue.PrimitiveType;
 import semantic.util.RecognizedKeywords;
 
@@ -35,7 +36,12 @@ public class MobiArray {
 	}
 	
 	public void initializeSize(int size) {
-		this.mobiValueArray = new MobiValue[size];
+		if(size <= 0){
+			Output.getInstance().print("Invalid array size assigned");
+			this.mobiValueArray = new MobiValue[1];
+		}
+		else
+			this.mobiValueArray = new MobiValue[size];
 		//Log.i(TAG, "Mobi array initialized to size " +this.mobiValueArray.length);
 	}
 	

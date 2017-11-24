@@ -12,6 +12,8 @@ import org.antlr.v4.runtime.Recognizer;
 import org.antlr.v4.runtime.atn.ATNConfigSet;
 import org.antlr.v4.runtime.dfa.DFA;
 
+import console.Output;
+
 public class BuildChecker implements ANTLRErrorListener {
 	private final static String TAG = "MobiProg_BuildChecker";
 	
@@ -45,7 +47,7 @@ public class BuildChecker implements ANTLRErrorListener {
 	public void syntaxError(Recognizer<?, ?> recognizer,
 			Object offendingSymbol, int line, int charPositionInLine,
 			String msg, RecognitionException e) {
-		System.out.println("Syntax error at line " +line+ ". " +msg);
+		Output.getInstance().print("Syntax error at line " +line+ ". " +msg);
 		
 		this.successful = false;
 	}
@@ -74,14 +76,14 @@ public class BuildChecker implements ANTLRErrorListener {
 	
 	public static void reportCustomError(int errorCode, String additionalMessage) {
 		String errorMessage = ErrorRepository.getErrorMessage(errorCode) + " " + additionalMessage;
-		System.out.println(errorMessage);
+		Output.getInstance().print(errorMessage);
 		
 		sharedInstance.successful = false;
 	}
 	
 	public static void reportCustomError(int errorCode, String additionalMessage, Object... parameters) {
 		String errorMessage = String.format(ErrorRepository.getErrorMessage(errorCode) + " " + additionalMessage, parameters);
-		System.out.println(errorMessage);
+		Output.getInstance().print(errorMessage);
 		
 		sharedInstance.successful = false;
 	}
