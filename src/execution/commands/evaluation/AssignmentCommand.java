@@ -33,6 +33,7 @@ public class AssignmentCommand implements ICommand{
 		this.leftHandExprCtx = leftHandExprCtx;
 		this.rightHandExprCtx = rightHandExprCtx;
 		
+		
 		UndeclaredChecker undeclaredChecker = new UndeclaredChecker(this.leftHandExprCtx);
 		undeclaredChecker.verify();
 		

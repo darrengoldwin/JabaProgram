@@ -73,6 +73,7 @@ public class IfCommand implements IConditionalCommand {
 	
 	private void identifyVariables() {
 		IValueMapper identifierMapper = new IdentifierMapper(this.conditionalExpr.getText());
+		System.out.println(this.conditionalExpr.getText());
 		identifierMapper.analyze(this.conditionalExpr);
 		
 		this.modifiedConditionExpr = identifierMapper.getModifiedExp();

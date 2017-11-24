@@ -100,7 +100,7 @@ public class FieldAnalyzer implements ParseTreeListener {
 	 * Attempts to create an intermediate representation of the variable once a sufficient amount of info has been retrieved.
 	 */
 	private void createMobiValue() {
-		
+		System.out.println("create");
 		if(this.identifiedTokens.containsTokens(ClassAnalyzer.ACCESS_CONTROL_KEY, ClassAnalyzer.PRIMITIVE_TYPE_KEY, ClassAnalyzer.IDENTIFIER_KEY)) {
 			
 			String classModifierString = this.identifiedTokens.getToken(ClassAnalyzer.ACCESS_CONTROL_KEY);

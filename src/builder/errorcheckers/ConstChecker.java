@@ -55,6 +55,7 @@ public class ConstChecker implements IErrorChecker, ParseTreeListener {
 		if(ctx instanceof ExpressionContext) {
 			ExpressionContext exprCtx = (ExpressionContext) ctx;
 			if(EvaluationCommand.isVariableOrConst(exprCtx)) {
+				
 				this.verifyVariableOrConst(exprCtx);
 			}
 		}
@@ -68,7 +69,7 @@ public class ConstChecker implements IErrorChecker, ParseTreeListener {
 	
 	private void verifyVariableOrConst(ExpressionContext varExprCtx) {
 		MobiValue mobiValue = null;
-		
+		System.out.println("EEE " + varExprCtx.primary().Identifier().getText());
 		if(ExecutionManager.getInstance().isInFunctionExecution()) {
 			MobiFunction mobiFunction = ExecutionManager.getInstance().getCurrentFunction();
 			mobiValue = VariableSearcher.searchVariableInFunction(mobiFunction, varExprCtx.primary().Identifier().getText());
@@ -76,8 +77,11 @@ public class ConstChecker implements IErrorChecker, ParseTreeListener {
 		
 		//if after function finding, mobi value is still null, search class
 		if(mobiValue == null) {
+			
 			ClassScope classScope = SymbolTable.getInstance().getClassScope(ParserHandler.getInstance().getCurrentClassName());
 			mobiValue = VariableSearcher.searchVariableInClassIncludingLocal(classScope, varExprCtx.primary().Identifier().getText());
+			if(varExprCtx.primary().Identifier().getText().equals(varExprCtx.primary().Identifier().getText().toUpperCase()))
+				mobiValue.markFinal();
 		}
 		
 		if(mobiValue != null && mobiValue.isFinal()) {
