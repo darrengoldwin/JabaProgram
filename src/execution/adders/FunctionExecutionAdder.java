@@ -24,6 +24,7 @@ public class FunctionExecutionAdder implements IExecutionAdder {
 	 */
 	@Override
 	public void addCommand(ICommand command) {
+		System.out.println("hoy");
 		this.assignedMobiFunction.addCommand(command);
 	}
 	

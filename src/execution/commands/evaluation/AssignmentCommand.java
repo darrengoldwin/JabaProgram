@@ -30,10 +30,10 @@ public class AssignmentCommand implements ICommand{
 
 	public AssignmentCommand(ExpressionContext leftHandExprCtx,
 			ExpressionContext rightHandExprCtx) {
+		System.out.println(TAG);
 		this.leftHandExprCtx = leftHandExprCtx;
 		this.rightHandExprCtx = rightHandExprCtx;
 		
-		System.out.println("RAWRARWA");
 		UndeclaredChecker undeclaredChecker = new UndeclaredChecker(this.leftHandExprCtx);
 		undeclaredChecker.verify();
 		
@@ -44,7 +44,8 @@ public class AssignmentCommand implements ICommand{
 		undeclaredChecker.verify();
 		
 		ParseTreeWalker functionWalker = new ParseTreeWalker();
-		functionWalker.walk(new FunctionCallVerifier(), this.rightHandExprCtx);
+		FunctionCallVerifier f = new FunctionCallVerifier();
+		functionWalker.walk(f, this.rightHandExprCtx);
 		
 		//type check the mobivalue
 		MobiValue mobiValue;
@@ -54,9 +55,16 @@ public class AssignmentCommand implements ICommand{
 		else {
 			mobiValue = VariableSearcher.searchVariable(this.leftHandExprCtx.getText());
 		}
+		if(f.isFunction()) {
+			TypeChecker typeChecker = new TypeChecker(mobiValue, this.rightHandExprCtx);
+			typeChecker.checkType(f.getFunc().getReturnValue().getPrimitiveType(), mobiValue.getPrimitiveType());
+		}else {
+			TypeChecker typeChecker = new TypeChecker(mobiValue, this.rightHandExprCtx);
+			typeChecker.verify();
+		}
 		
-		TypeChecker typeChecker = new TypeChecker(mobiValue, this.rightHandExprCtx);
-		typeChecker.verify();
+		
+		
 	}
 
 	/*

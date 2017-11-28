@@ -18,7 +18,7 @@ import representation.MobiValue.PrimitiveType;
  *
  */
 public class IncDecCommand implements ICommand {
-
+	private final static String TAG = "IncDecCommand";
 	private ExpressionContext exprCtx;
 	private int tokenSign;
 	
@@ -35,6 +35,7 @@ public class IncDecCommand implements ICommand {
 	 */
 	@Override
 	public void execute() {
+		System.out.println(TAG);
 		//String identifier = this.exprCtx.primary().Identifier().getText();
 		//MobiValue mobiValue = MobiValueSearcher.searchMobiValue(identifier);
 		

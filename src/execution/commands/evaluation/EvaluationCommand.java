@@ -36,6 +36,7 @@ public class EvaluationCommand implements ICommand, ParseTreeListener {
 	private BigDecimal resultValue;
 	
 	public EvaluationCommand(ExpressionContext exprCtx) {
+		System.out.println(TAG);
 		this.parentExprCtx = exprCtx;
 	}
 	
@@ -46,10 +47,9 @@ public class EvaluationCommand implements ICommand, ParseTreeListener {
 	public void execute() {
 		System.out.println(TAG);
 		this.modifiedExp = this.parentExprCtx.getText();
-		System.out.println(modifiedExp);
-
+		
 		//catch rules if the value has direct boolean flags
-		if(this.modifiedExp.contains(RecognizedKeywords.BOOLEAN_TRUE)) {
+		if(this.modifiedExp.equals(RecognizedKeywords.BOOLEAN_TRUE)) {
 			this.resultValue = new BigDecimal(1);
 		}
 		else if(this.modifiedExp.contains(RecognizedKeywords.BOOLEAN_FALSE)) {

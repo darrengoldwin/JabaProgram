@@ -44,11 +44,12 @@ public class MobiFunction implements IControlledCommand{
 	private List<ICommand> commandSequences; //the list of commands execution by the function
 	
 	private LocalScope parentLocalScope; //refers to the parent local scope of this function.
-	
+	private boolean init = false;
 	private LinkedHashMap<String, ClassScope> parameterReferences; //the list of parameters accepted that follows the 'call-by-reference' standard.
 	private LinkedHashMap<String, MobiValue> parameterValues;	//the list of parameters accepted that follows the 'call-by-value' standard.
 	private MobiValue returnValue; //the return value of the function. null if it's a void type
 	private FunctionType returnType = FunctionType.VOID_TYPE; //the return type of the function
+	
 	
 	public MobiFunction() {
 		this.commandSequences = new ArrayList<ICommand>();
@@ -66,7 +67,6 @@ public class MobiFunction implements IControlledCommand{
 	
 	public void setReturnType(FunctionType functionType) {
 		this.returnType = functionType;
-		
 		//create an empty mobi value as a return value
 		switch(this.returnType) {
 			case BOOLEAN_TYPE: this.returnValue = new MobiValue(true, PrimitiveType.BOOLEAN); break;
@@ -80,8 +80,14 @@ public class MobiFunction implements IControlledCommand{
 			case STRING_TYPE: this.returnValue = new MobiValue("", PrimitiveType.STRING); break;
 			default:break;	
 		}
+		init = true;
 	}
-	
+	public boolean isInit() {
+		return this.init;
+	}
+	public void init() {
+		this.init = true;
+	}
 	public FunctionType getReturnType() {
 		return this.returnType;
 	}

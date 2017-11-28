@@ -38,6 +38,7 @@ public class PrintCommand implements ICommand, ParseTreeListener {
 	
 	@Override
 	public void execute() {
+		System.out.println(TAG);
 		ParseTreeWalker treeWalker = new ParseTreeWalker();
 		treeWalker.walk(this, this.expressionCtx);
 		

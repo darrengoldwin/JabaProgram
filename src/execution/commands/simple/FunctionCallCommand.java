@@ -32,6 +32,7 @@ public class FunctionCallCommand implements ICommand {
 	private String functionName;
 	
 	public FunctionCallCommand(String functionName, ExpressionContext exprCtx) {
+		System.out.println(TAG);
 		this.functionName = functionName;
 		this.exprCtx = exprCtx;
 		
@@ -48,6 +49,7 @@ public class FunctionCallCommand implements ICommand {
 	 */
 	@Override
 	public void execute() {
+		System.out.println(TAG);
 		this.mapParameters();
 		this.mobiFunction.execute();
 	}

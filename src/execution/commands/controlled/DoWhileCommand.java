@@ -26,6 +26,7 @@ public class DoWhileCommand extends WhileCommand {
 	 */
 	@Override
 	public void execute() {
+		System.out.println(TAG);
 		this.executeFirstCommandSequence();
 		super.execute();
 	}

@@ -10,6 +10,7 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import builder.ParserHandler;
+import console.Output;
 import execution.ExecutionManager;
 import initial.JabaParser.BlockContext;
 import initial.JabaParser.MainDeclarationContext;
@@ -46,7 +47,7 @@ public class MainAnalyzer implements ParseTreeListener {
 			
 		}
 		else {
-			//Console.log(LogType.DEBUG, "Already found main in " +ExecutionManager.getInstance().getEntryClassName());
+			Output.getInstance().print("Already found main in " +ExecutionManager.getInstance().getEntryClassName());
 		}
 	}
 

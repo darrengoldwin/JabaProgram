@@ -6,7 +6,9 @@ package execution.commands.evaluation;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
 import analyzer.FunctionCallVerifier;
+import builder.errorcheckers.TypeChecker;
 import builder.errorcheckers.UndeclaredChecker;
+import execution.ExecutionManager;
 import execution.commands.ICommand;
 import initial.JabaParser.ExpressionContext;
 import representation.MobiValue;
@@ -30,6 +32,8 @@ public class MappingCommand implements ICommand {
 	private String modifiedExp;
 	
 	public MappingCommand(String identifierString, ExpressionContext exprCtx) {
+		System.out.println(TAG);
+		
 		this.identifierString = identifierString;
 		this.parentExprCtx = exprCtx;
 		
@@ -37,7 +41,24 @@ public class MappingCommand implements ICommand {
 		undeclaredChecker.verify();
 		
 		ParseTreeWalker functionWalker = new ParseTreeWalker();
-		functionWalker.walk(new FunctionCallVerifier(), this.parentExprCtx);
+		FunctionCallVerifier f = new FunctionCallVerifier();
+		functionWalker.walk(f, this.parentExprCtx);
+		
+		MobiValue mobiValue;
+		if(ExecutionManager.getInstance().isInFunctionExecution()) {
+			mobiValue = VariableSearcher.searchVariableInFunction(ExecutionManager.getInstance().getCurrentFunction(), identifierString);
+		}
+		else {
+			mobiValue = VariableSearcher.searchVariable(identifierString);
+		}
+		
+		if(f.isFunction()) {
+			TypeChecker typeChecker = new TypeChecker(mobiValue, this.parentExprCtx);
+			typeChecker.checkType(f.getFunc().getReturnValue().getPrimitiveType(), mobiValue.getPrimitiveType());
+		}else {
+			TypeChecker typeChecker = new TypeChecker(mobiValue, this.parentExprCtx);
+			typeChecker.verify();
+		}
 		
 	}
 	
@@ -47,9 +68,9 @@ public class MappingCommand implements ICommand {
 	 */
 	@Override
 	public void execute() {
-		
+		System.out.println(TAG);
 		this.modifiedExp = this.parentExprCtx.getText();
-		System.out.println(this.modifiedExp);
+		
 		EvaluationCommand evaluationCommand = new EvaluationCommand(this.parentExprCtx);
 		evaluationCommand.execute();
 		MobiValue mobiValue = VariableSearcher.searchVariable(this.identifierString);

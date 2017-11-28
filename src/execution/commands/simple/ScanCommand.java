@@ -36,7 +36,7 @@ public class ScanCommand implements ICommand, NotificationListener{
 	}
 	@Override
 	public void execute() {
-		
+		System.out.println(TAG);
 		NotificationCenter.getInstance().addObserver(Notifications.ON_SCAN_DIALOG_DISMISSED, this); //add an observer to listen to when the dialog has been dismissed
 		
 		Parameters params = new Parameters();

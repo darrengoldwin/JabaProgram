@@ -9,6 +9,7 @@ import org.antlr.v4.runtime.tree.ParseTreeListener;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
+import builder.errorcheckers.MultipleVarDecChecker;
 import execution.ExecutionManager;
 import execution.commands.evaluation.ArrayInitializeCommand;
 import initial.JabaParser.ArrayCreatorRestContext;
@@ -67,12 +68,20 @@ public class ArrayAnalyzer implements ParseTreeListener{
 
 	@Override
 	public void enterEveryRule(ParserRuleContext ctx) {
+		
+		
 		if(ctx instanceof PrimitiveTypeContext) {
 			PrimitiveTypeContext primitiveCtx = (PrimitiveTypeContext) ctx;
 			this.identifiedTokens.addToken(ARRAY_PRIMITIVE_KEY, primitiveCtx.getText());
 		}
 		else if(ctx instanceof VariableDeclaratorIdContext) {
+			
 			VariableDeclaratorIdContext varDecIdCtx = (VariableDeclaratorIdContext) ctx;
+			
+			//check for duplicate declarations
+			MultipleVarDecChecker multipleDeclaredChecker = new MultipleVarDecChecker(varDecIdCtx);
+			multipleDeclaredChecker.verify();
+			
 			this.identifiedTokens.addToken(ARRAY_IDENTIFIER_KEY, varDecIdCtx.getText());
 			
 			this.analyzeArray();

@@ -30,6 +30,7 @@ public class SymbolTable {
 	
 	public static void initialize() {
 		sharedInstance = new SymbolTable();
+		System.out.println("SYMBOL TABLE");
 	}
 	
 	public static void reset() {
@@ -38,7 +39,7 @@ public class SymbolTable {
 	}
 	
 	public void addClassScope(String className, ClassScope classScope) {
-		
+		System.out.println("CLASSSS : " + className);
 		this.classTable.put(className, classScope);
 	}
 	
@@ -48,7 +49,7 @@ public class SymbolTable {
 			return this.classTable.get(className);
 		}
 		else {
-			//Log.e(TAG, className + " is not found!");
+			System.out.println(className + " is not found!");
 			return null;
 		}
 	}

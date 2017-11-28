@@ -49,7 +49,6 @@ public class TextEditor implements NotificationListener{
 	@Override
 	public void onNotify(String notificationString, Parameters params) {
 		if(notificationString == Notifications.ON_BUILD_EVENT) {
-			
 			this.compileAndParseText();
 		}
 		else if(notificationString == Notifications.ON_NEW_CLASS_CREATED) {

@@ -190,22 +190,33 @@ public class GUI extends JFrame{
 					int lineNumber =0;
 					int index=0;
 					for(int i =0; i< arr.length; i++) {
+						
 						startIndex= output.getLineStartOffset(i);
 						endIndex = output.getLineEndOffset(i);
 						
+						
 						if(startIndex < output.getCaretPosition() && output.getCaretPosition() < endIndex ) {
-							System.out.println(i + " " + startIndex + " " + endIndex);
-							String[] temp = arr[i].replaceAll("line ", "").split(":");
-							lineNumber = Integer.parseInt(temp[0])-1;
+						
+							String s = arr[i].replaceAll("line ","aaa");
+							System.out.println(s);
+							
+							
+							String[] temp = s.split("aaa");
+							
+							s = temp[1].substring(0, temp[1].length()-3);
+							
+							lineNumber = Integer.parseInt(s)-1;
+						
 							break;
 						}
 					}
+					
 					arr = code.getText().split("\n");
 					
 					startIndex= code.getLineStartOffset(lineNumber);
 					endIndex = code.getLineEndOffset(lineNumber);
 					
-					System.out.println(startIndex + " " + endIndex);
+					
 					code.setCaretPosition(startIndex);
 		        	code.getHighlighter().addHighlight(startIndex, endIndex, painter);
 		        }catch(Exception ex) {

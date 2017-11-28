@@ -46,6 +46,7 @@ public class ForCommand implements IControlledCommand {
 	 */
 	@Override
 	public void execute() {
+		System.out.println(TAG);
 		this.evaluateLocalVariable();
 		this.identifyVariables();
 		

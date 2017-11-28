@@ -40,6 +40,7 @@ public class WhileCommand implements IControlledCommand {
 	 */
 	@Override
 	public void execute() {
+		System.out.println(TAG);
 		this.identifyVariables();
 		
 		ExecutionMonitor executionMonitor = ExecutionManager.getInstance().getExecutionMonitor();

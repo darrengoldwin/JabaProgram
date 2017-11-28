@@ -889,6 +889,14 @@ public class Expression {
 	 */
 	public BigDecimal eval() {
 
+		if(this.expression.equals(RecognizedKeywords.BOOLEAN_TRUE)) {
+			System.out.println("hi");
+			return new BigDecimal(1);
+		}
+		else if(this.expression.contains(RecognizedKeywords.BOOLEAN_FALSE)) {
+			return new BigDecimal(0);
+		}
+		
 		Stack<BigDecimal> stack = new Stack<BigDecimal>();
 
 		for (String token : getRPN()) {

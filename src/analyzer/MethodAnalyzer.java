@@ -44,8 +44,8 @@ public class MethodAnalyzer implements ParseTreeListener {
 	}
 	
 	public void analyze(MethodDeclarationContext ctx) {
-		ExecutionManager.getInstance().openFunctionExecution(this.declaredMobiFunction);
 		
+		ExecutionManager.getInstance().openFunctionExecution(this.declaredMobiFunction);
 		ParseTreeWalker treeWalker = new ParseTreeWalker();
 		treeWalker.walk(this, ctx);
 	}
@@ -64,12 +64,17 @@ public class MethodAnalyzer implements ParseTreeListener {
 
 	@Override
 	public void enterEveryRule(ParserRuleContext ctx) {
+		
 		if(ctx instanceof MethodDeclarationContext) {
+			if(ctx.getText().contains("void")) {
+				this.declaredMobiFunction.init();
+			}
 			MethodDeclarationContext methodDecCtx = (MethodDeclarationContext) ctx;
 			MultipleFuncDecChecker funcDecChecker = new MultipleFuncDecChecker(methodDecCtx);
 			funcDecChecker.verify();
 			
 			this.analyzeIdentifier(methodDecCtx.Identifier()); //get the function identifier
+			
 		}
 		else {
 			this.analyzeMethod(ctx);
@@ -87,15 +92,20 @@ public class MethodAnalyzer implements ParseTreeListener {
 	private void analyzeMethod(ParserRuleContext ctx) {
 		
 		if(ctx instanceof TypeContext) {
+			
 			TypeContext typeCtx = (TypeContext) ctx;
 			
 			//return type is a primitive type
 			if(typeCtx.primitiveType() != null) {
+				
 				PrimitiveTypeContext primitiveTypeCtx = typeCtx.primitiveType();
-				this.declaredMobiFunction.setReturnType(MobiFunction.identifyFunctionType(primitiveTypeCtx.getText()));
+				
+				if(!declaredMobiFunction.isInit())
+					this.declaredMobiFunction.setReturnType(MobiFunction.identifyFunctionType(primitiveTypeCtx.getText()));
 			}
 			//return type is a string or a class type
 			else {
+				
 				this.analyzeClassOrInterfaceType(typeCtx.classOrInterfaceType());
 			}
 		}

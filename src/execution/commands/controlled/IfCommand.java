@@ -46,6 +46,7 @@ public class IfCommand implements IConditionalCommand {
 	 */
 	@Override
 	public void execute() {
+		System.out.println(TAG);
 		this.identifyVariables();
 		
 		ExecutionMonitor executionMonitor = ExecutionManager.getInstance().getExecutionMonitor();

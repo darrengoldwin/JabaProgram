@@ -145,7 +145,9 @@ public class ExecutionManager implements NotificationListener {
 	 */
 	public void executeAllActions() {
 		
-		
+		for(int i=0; i< executionList.size(); i++) {
+			System.out.println(executionList.get(i).toString());
+		}
 		this.executionMonitor = new ExecutionMonitor();
 		this.executionThread = new ExecutionThread(this.executionList, this.executionMonitor);
 		this.executionThread.start();
