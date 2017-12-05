@@ -47,7 +47,7 @@ public class BuildChecker implements ANTLRErrorListener {
 	public void syntaxError(Recognizer<?, ?> recognizer,
 			Object offendingSymbol, int line, int charPositionInLine,
 			String msg, RecognitionException e) {
-		Output.getInstance().print("Syntax error at line " +line+ ". " +msg);
+		Output.getInstance().print("Syntax error at line " +line+ ". " +msg + "\n");
 		
 		this.successful = false;
 	}
@@ -76,14 +76,14 @@ public class BuildChecker implements ANTLRErrorListener {
 	
 	public static void reportCustomError(int errorCode, String additionalMessage) {
 		String errorMessage = ErrorRepository.getErrorMessage(errorCode) + " " + additionalMessage;
-		Output.getInstance().print(errorMessage);
+		Output.getInstance().print(errorMessage + "\n");
 		
 		sharedInstance.successful = false;
 	}
 	
 	public static void reportCustomError(int errorCode, String additionalMessage, Object... parameters) {
 		String errorMessage = String.format(ErrorRepository.getErrorMessage(errorCode) + " " + additionalMessage, parameters);
-		Output.getInstance().print(errorMessage);
+		Output.getInstance().print(errorMessage + "\n");
 		
 		sharedInstance.successful = false;
 	}

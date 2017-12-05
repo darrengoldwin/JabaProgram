@@ -75,21 +75,44 @@ public class AssignmentCommand implements ICommand{
 	@Override
 	public void execute() {
 		System.out.println(TAG);
-		EvaluationCommand evaluationCommand = new EvaluationCommand(this.rightHandExprCtx);
-		evaluationCommand.execute();
 		
-		if(this.isLeftHandArrayAccessor()) {
+		try {
+			EvaluationCommand evaluationCommand = new EvaluationCommand(this.rightHandExprCtx);
+			evaluationCommand.execute();
 			
-			this.handleArrayAssignment(evaluationCommand.getResult().toEngineeringString());
-		}
-		else {
+			if(this.isLeftHandArrayAccessor()) {
+				
+				this.handleArrayAssignment(evaluationCommand.getResult().toEngineeringString());
+			}
+			else {
+				
+				MobiValue mobiValue = VariableSearcher.searchVariable(this.leftHandExprCtx.getText());
+				AssignmentUtils.assignAppropriateValue(mobiValue, evaluationCommand.getResult());
+			}
 			
-			MobiValue mobiValue = VariableSearcher.searchVariable(this.leftHandExprCtx.getText());
-			AssignmentUtils.assignAppropriateValue(mobiValue, evaluationCommand.getResult());
+		} catch(Exception e) {
+			
+			if(this.isLeftHandArrayAccessor()) {
+				
+				this.handleArrayAssignment(this.rightHandExprCtx.getText());
+			}
+			else {
+				MobiValue mobiValue = VariableSearcher.searchVariable(this.leftHandExprCtx.getText());
+				if(mobiValue.getPrimitiveType().equals(MobiValue.PrimitiveType.STRING) || 
+						mobiValue.getPrimitiveType().equals(MobiValue.PrimitiveType.CHAR)) {
+					mobiValue.setValue(this.rightHandExprCtx.getText());
+					
+				}
+			}
+			
+			
+			
 		}
+		
+		
 	}
 	
-	private boolean isLeftHandArrayAccessor() {
+	public boolean isLeftHandArrayAccessor() {
 		List<TerminalNode> lBrackTokens = this.leftHandExprCtx.getTokens(JabaLexer.LBRACK);
 		List<TerminalNode> rBrackTokens = this.leftHandExprCtx.getTokens(JabaLexer.RBRACK);
 		
@@ -108,9 +131,21 @@ public class AssignmentCommand implements ICommand{
 		
 		//create a new array value to replace value at specified index
 		MobiValue newArrayValue = new MobiValue(null, mobiArray.getPrimitiveType());
-		newArrayValue.setValue(resultString);
+		
+		MobiValue m = VariableSearcher.searchVariable(resultString);
+		
+		if(m != null)
+			newArrayValue.setValue(m.getValue().toString());
+		else
+			newArrayValue.setValue(resultString);
+		
 		mobiArray.updateValueAt(newArrayValue, evaluationCommand.getResult().intValue());
 		
 		//Console.log("Index to access: " +evaluationCommand.getResult().intValue()+ " Updated with: " +resultString);
+	}
+
+	public ExpressionContext getLeftHandExprCtx() {
+		// TODO Auto-generated method stub
+		return leftHandExprCtx;
 	}
 }

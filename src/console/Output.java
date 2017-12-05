@@ -36,8 +36,14 @@ public class Output {
 	}
 	
 	public void print(String s) {
-		log+= s + "\n";
 		
+		if(s.contains("\\n")) {
+			s = s.replaceAll("\\\\n", "\n");
+		}
+			
+		
+		log+= s;
+		handleErrors();
 		console.setText(log);
 	}
 	
@@ -46,5 +52,9 @@ public class Output {
 		log ="";
 		
 		console.setText(log);
+	}
+	public void handleErrors() {
+		
+		this.log = this.log.replaceAll("Missing 'this' keyword for method call", "Extraneous Inputs ");
 	}
 }

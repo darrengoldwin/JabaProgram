@@ -85,6 +85,7 @@ public class LocalScope implements IScope {
 	
 	@Override
 	public MobiValue searchVariableIncludingLocal(String identifier) {
+		
 		if(this.containsVariable(identifier)) {
 			return this.localVariables.get(identifier);
 		}

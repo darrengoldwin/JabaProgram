@@ -78,6 +78,7 @@ public class FunctionIdentifierMapper implements ParseTreeListener, IValueMapper
 			
 			if(primaryCtx.Identifier() != null) {
 				String variableKey = primaryCtx.getText();
+				
 				this.searchVariable(variableKey);
 			}
 		}
@@ -85,6 +86,8 @@ public class FunctionIdentifierMapper implements ParseTreeListener, IValueMapper
 	
 	private void searchVariable(String identifierString) {
 		if(this.assignedFunction.hasParameter(identifierString)) {
+			System.out.println(this.modifiedExp);
+			System.out.println(this.assignedFunction.getParameter(identifierString).getValue());
 			this.modifiedExp = this.modifiedExp.replace(identifierString, this.assignedFunction.getParameter(identifierString).getValue().toString());
 		}
 		else {

@@ -168,7 +168,7 @@ public class ExecutionManager implements NotificationListener {
 	@Override
 	public void onNotify(String notificationString, Parameters params) {
 		if(notificationString == Notifications.ON_EXECUTION_FINISHED) {
-			Output.getInstance().printa("<<<<terminate>>>>");
+			Output.getInstance().print("\n"+"<<<<terminate>>>>");
 			//SymbolTableManager.getInstance().resetClassTables(); //TODO: does not work as intended
 		}
 	}

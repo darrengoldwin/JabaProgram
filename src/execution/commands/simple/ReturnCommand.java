@@ -48,7 +48,6 @@ public class ReturnCommand implements ICommand {
 			
 		try {
 			MobiValue m = VariableSearcher.searchVariableInFunction(mobiFunction, expressionCtx.getText());
-			
 			if (!m.getPrimitiveType().equals(mobiValue.getPrimitiveType())) {
 				
 				if (mobiValue.getPrimitiveType() == PrimitiveType.BOOLEAN) {

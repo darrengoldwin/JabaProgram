@@ -173,7 +173,7 @@ public class MobiFunction implements IControlledCommand{
 			return this.parameterValues.get(identifierString);
 		}
 		else {
-			//Log.e(TAG, identifierString + " not found in parameter list");
+			System.out.println(identifierString + " not found in parameter list");
 			return null;
 		}
 	}

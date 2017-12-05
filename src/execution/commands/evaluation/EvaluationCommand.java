@@ -14,7 +14,10 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 
 import builder.ParserHandler;
 import execution.commands.ICommand;
+import initial.JabaParser.ArrayCreatorRestContext;
+import initial.JabaParser.ArrayInitializerContext;
 import initial.JabaParser.ExpressionContext;
+import representation.MobiArray;
 import representation.MobiFunction;
 import representation.MobiValue;
 import scope.ClassScope;
@@ -33,11 +36,17 @@ public class EvaluationCommand implements ICommand, ParseTreeListener {
 	
 	private ExpressionContext parentExprCtx;
 	private String modifiedExp;
+	private int index;
 	private BigDecimal resultValue;
 	
 	public EvaluationCommand(ExpressionContext exprCtx) {
-		System.out.println(TAG);
+		
 		this.parentExprCtx = exprCtx;
+	}
+	
+	public EvaluationCommand(String modifiedExp) {
+		
+		this.modifiedExp = modifiedExp;
 	}
 	
 	/* (non-Javadoc)
@@ -46,8 +55,25 @@ public class EvaluationCommand implements ICommand, ParseTreeListener {
 	@Override
 	public void execute() {
 		System.out.println(TAG);
-		this.modifiedExp = this.parentExprCtx.getText();
+		if(this.modifiedExp == null)
+			this.modifiedExp = this.parentExprCtx.getText();
 		
+		this.index = -1;
+		if(this.modifiedExp.contains("[") && this.modifiedExp.contains("]")) {
+			
+			
+			String[] s = this.modifiedExp.split("\\[");
+			
+			String[] g = s[1].split("\\]");
+			String a = g[0];
+			
+			MobiValue mobiValue = VariableSearcher.searchVariable(a);
+			if(mobiValue == null)	
+				this.index = Integer.parseInt(a);
+			else
+				this.index = (int)mobiValue.getValue();
+			
+		}
 		//catch rules if the value has direct boolean flags
 		if(this.modifiedExp.equals(RecognizedKeywords.BOOLEAN_TRUE)) {
 			this.resultValue = new BigDecimal(1);
@@ -55,11 +81,39 @@ public class EvaluationCommand implements ICommand, ParseTreeListener {
 		else if(this.modifiedExp.contains(RecognizedKeywords.BOOLEAN_FALSE)) {
 			this.resultValue = new BigDecimal(0);
 		}
+		else if(this.modifiedExp.contains("'") && this.modifiedExp.contains("'")) {
+			
+			System.out.println("hi");
+			String[] s = this.modifiedExp.split("\\'");
+			String m = s[0].replaceAll("=","");
+			String[] g = s[1].split("\\'");
+			String a = g[0];
+			MobiValue mobiValue = VariableSearcher.searchVariable(m);
+			if(mobiValue == null){
+				if(a.equals(m))
+					this.resultValue = new BigDecimal(1);
+				else
+					this.resultValue = new BigDecimal(0);
+			}
+			else {
+				
+				if(a.trim().equals(mobiValue.getValue().toString())) {
+
+					this.resultValue = new BigDecimal(1);
+				}
+				else 
+					this.resultValue = new BigDecimal(0);
+			}
+				
+			
+		}
 		else {
+			
 			ParseTreeWalker treeWalker = new ParseTreeWalker();
 			treeWalker.walk(this, this.parentExprCtx);
-			
+				
 			Expression evalEx = new Expression(this.modifiedExp);
+			
 			//Log.i(TAG,"Modified exp to eval: " +this.modifiedExp);
 			this.resultValue = evalEx.eval();
 		}
@@ -79,15 +133,19 @@ public class EvaluationCommand implements ICommand, ParseTreeListener {
 
 	@Override
 	public void enterEveryRule(ParserRuleContext ctx) {
+		
 		if (ctx instanceof ExpressionContext) {
+			
 			ExpressionContext exprCtx = (ExpressionContext) ctx;
 			if (EvaluationCommand.isFunctionCall(exprCtx)) {
 				this.evaluateFunctionCall(exprCtx);
 			}
 
 			else if (EvaluationCommand.isVariableOrConst(exprCtx)) {
+				
 				this.evaluateVariable(exprCtx);
 			}
+			
 		}
 	}
 
@@ -145,9 +203,16 @@ public class EvaluationCommand implements ICommand, ParseTreeListener {
 	private void evaluateVariable(ExpressionContext exprCtx) {
 		MobiValue mobiValue = VariableSearcher
 				.searchVariable(exprCtx.getText());
-
-		this.modifiedExp = this.modifiedExp.replaceFirst(exprCtx.getText(),
-				mobiValue.getValue().toString());
+		if(this.index == -1) {
+			
+			this.modifiedExp = this.modifiedExp.replaceFirst(exprCtx.getText(),
+					mobiValue.getValue().toString());
+		}
+		else {
+			MobiArray mobiArray = (MobiArray) mobiValue.getValue();
+			this.modifiedExp = mobiArray.getValueAt(index).getValue().toString();
+			this.index = -1;
+		}
 	}
 
 	/*

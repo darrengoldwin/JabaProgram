@@ -12,11 +12,18 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextPane;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultHighlighter;
+import javax.swing.text.DefaultStyledDocument;
+import javax.swing.text.MutableAttributeSet;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
 
 import builder.BuildChecker;
 import console.Input;
@@ -41,7 +48,7 @@ public class GUI extends JFrame{
     private static JTextArea output;
     private static JTextArea input;
     private JButton compile;
-    private JTextArea code;
+    private JTextPane code;
     private static JButton submit;
     private TextLineNumber codeLn;
     private TextLineNumber outputLn;
@@ -52,7 +59,14 @@ public class GUI extends JFrame{
     private TextEditor te;
     
     private DefaultHighlighter.DefaultHighlightPainter painter;
+    private boolean quote = false;;
     
+    private MutableAttributeSet  attrBlue;
+    private MutableAttributeSet  attrDBlue;
+    private MutableAttributeSet  attrBlack;
+    private MutableAttributeSet  attrGray;
+    private MutableAttributeSet  attrOrange;
+    private MutableAttributeSet  attrMagenta;
     
     public GUI() {
     	this.app = new App();
@@ -91,18 +105,122 @@ public class GUI extends JFrame{
 		Input.getInstance().clear();
 	}
     
+    public void colorChange(DefaultStyledDocument d, String text, int wordL, int wordR) {
+    	System.out.println(text.substring(wordL, wordR));
+    	
+    	if (text.substring(wordL, wordR).matches("(\\W)*(private|public|protected|void|boolean|int|float|double|char|String|final|new)")) {
+    		
+    		d.setCharacterAttributes(wordL, wordR - wordL, attrMagenta, true);
+    	}
+    	else if (text.substring(wordL, wordR).matches("[\\{|\\}|\\]|\\[|\\(|\\)|\\*|\\/|\\;].*")) {
+    		d.setCharacterAttributes(wordL,1, attrDBlue, true);
+    	}
+    	else if (text.substring(wordL, wordR).matches("(\\W)*(\\d+(\\.\\d+)?)")) 
+            d.setCharacterAttributes(wordL, wordR - wordL, attrOrange, false);
+    	else if (text.substring(wordL, wordR).matches("(\\W)*(true|false)")) 
+            d.setCharacterAttributes(wordL, wordR - wordL, attrBlue, false);
+    	else if (text.substring(wordL, wordR).matches("\\\".*")) {
+    		quote = !quote;	
+    		d.setCharacterAttributes(wordL, wordR - wordL, attrGray, false);
+    	}else if(quote)
+    		d.setCharacterAttributes(wordL, wordR - wordL, attrGray, false);            
+        else
+            d.setCharacterAttributes(wordL, wordR - wordL, attrBlack, false);
+    }
+    private int findLastNonWordChar (String text, int index) {
+        while (--index >= 0) {
+            if (String.valueOf(text.charAt(index)).matches("\\W")) {
+                break;
+            }
+        }
+        return index;
+    }
+
+    private int findFirstNonWordChar (String text, int index) {
+        while (index < text.length()) {
+            if (String.valueOf(text.charAt(index)).matches("\\W")) {
+                break;
+            }
+            index++;
+        }
+        return index;
+    }
+    
+    
+    public void initStyle() {
+    	attrBlue = new SimpleAttributeSet();
+    	attrOrange = new SimpleAttributeSet();
+    	attrGray = new SimpleAttributeSet();
+    	attrBlack = new SimpleAttributeSet();
+    	attrDBlue = new SimpleAttributeSet();
+    	attrMagenta = new SimpleAttributeSet();
+		StyleConstants.setForeground(attrBlue, Color.BLUE);
+    	StyleConstants.setForeground(attrOrange, Color.ORANGE);
+    	StyleConstants.setForeground(attrGray, Color.GRAY);
+    	StyleConstants.setForeground(attrBlack, Color.BLACK);
+    	StyleConstants.setForeground(attrDBlue, new Color(0,0,151));
+    	StyleConstants.setForeground(attrMagenta, Color.MAGENTA);
+    	StyleConstants.setBold(attrDBlue, true);
+    	StyleConstants.setBold(attrMagenta, false);
+    	StyleConstants.setBold(attrOrange, true);
+    	StyleConstants.setBold(attrBlue, true);
+    	StyleConstants.setBold(attrBlack, false);
+    	StyleConstants.setBold(attrGray, false);
+    	StyleConstants.setItalic(attrGray, true);
+    }
     public void init() {
     	
+    	initStyle();
     	painter = new DefaultHighlighter.DefaultHighlightPainter(Color.RED);
-        code = new JTextArea("");
+    	
+    	DefaultStyledDocument doc = new DefaultStyledDocument() {
+            public void insertString (int offset, String str, AttributeSet a) throws BadLocationException {
+                super.insertString(offset, str, a);
+                code.getHighlighter().removeAllHighlights();
+                String text = getText(0, getLength());
+                int before = findLastNonWordChar(text, offset);
+                if (before < 0) before = 0;
+                int after = findFirstNonWordChar(text, offset + str.length());
+                int wordL = before;
+                int wordR = before;
+
+                while (wordR <= after) {
+                    if (wordR == after || String.valueOf(text.charAt(wordR)).matches("\\W")) {
+                    	colorChange(this, text, wordL, wordR);
+                        wordL = wordR;
+                    }
+                    wordR++;
+                }
+            }
+
+            public void remove (int offs, int len) throws BadLocationException {
+                super.remove(offs, len);
+                code.getHighlighter().removeAllHighlights();
+                String text = getText(0, getLength());
+                int before = findLastNonWordChar(text, offs);
+                if (before < 0) before = 0;
+                int after = findFirstNonWordChar(text, offs);
+
+                colorChange(this, text, before, after);
+            }
+        };
+        
+//        JTextPane txt = new JTextPane(doc);
+//        txt.setText("public class Hi {}");
+//        add(new JScrollPane(txt));
+//        setVisible(true);
+        
+        code = new JTextPane(doc);
         code.setVisible(true);
-        code.setBackground(new java.awt.Color(164, 231, 223));
+        //code.setBackground(new java.awt.Color(164, 231, 223));
+        code.setBackground(Color.WHITE);
         code.setBorder(BorderFactory.createLineBorder(Color.black));
-        code.setWrapStyleWord(true);
+        //code.setWrapStyleWord(true);
         codeLn = new TextLineNumber(code);
         codeLn.setUpdateFont(true);
         code.setFont(new Font("Consolas", Font.PLAIN,14));
-        
+     
+       
         compile = new JButton();
         compile.setText("Compile");
         compile.setVisible(true);
@@ -117,6 +235,7 @@ public class GUI extends JFrame{
         compile.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+            	code.getHighlighter().removeAllHighlights();
         		te.onCreateView(code);
             	GUI.performResetComponents();
         		NotificationCenter.getInstance().postNotification(Notifications.ON_BUILD_EVENT);
@@ -202,21 +321,21 @@ public class GUI extends JFrame{
 							
 							
 							String[] temp = s.split("aaa");
-							
-							s = temp[1].substring(0, temp[1].length()-3);
+							String[] t = temp[1].split("\\.");
+							s = t[0];
 							
 							lineNumber = Integer.parseInt(s)-1;
 						
 							break;
 						}
 					}
-					
+					endIndex =0;
 					arr = code.getText().split("\n");
-					
-					startIndex= code.getLineStartOffset(lineNumber);
-					endIndex = code.getLineEndOffset(lineNumber);
-					
-					
+					int i;
+					for(i =0; i< lineNumber+1; i++) {
+						endIndex += arr[i].length();
+					}
+					startIndex = endIndex - arr[i-1].length();
 					code.setCaretPosition(startIndex);
 		        	code.getHighlighter().addHighlight(startIndex, endIndex, painter);
 		        }catch(Exception ex) {
@@ -286,4 +405,5 @@ public class GUI extends JFrame{
         this.add(inputSb);
 
     }
+    
 }

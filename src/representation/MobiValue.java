@@ -63,15 +63,19 @@ public class MobiValue {
 			//Log.e(TAG, "Primitive type not yet identified!");
 		}
 		
-		else if(this.primitiveType == PrimitiveType.STRING) {
-			this.value = StringUtils.removeQuotes(value);
+		else if(this.primitiveType == PrimitiveType.CHAR) {
+			this.value = StringUtils.removeQuotes(value).charAt(0);
+			System.out.println(this.value + "AAsa");
 		}
 		else if(this.primitiveType == PrimitiveType.ARRAY) {
 			//Log.e(TAG, this.primitiveType + " is an array. Cannot directly change value.");
+		}else if(this.primitiveType == PrimitiveType.STRING) {
+			this.value = StringUtils.removeQuotes(value);
 		}
 		else {
 			//attempts to type cast the value
 			this.value = this.attemptTypeCast(value);
+			
 		}
 	}
 	
@@ -85,7 +89,7 @@ public class MobiValue {
 		
 				case BOOLEAN: return Boolean.valueOf(value);
 				case BYTE: return Byte.valueOf(value);
-				case CHAR: return Character.valueOf(value.charAt(0)); //only get first char at value
+				case CHAR: return Character.valueOf(value.charAt(0));//only get first char at value
 				case INT: return Integer.valueOf(value);
 				case LONG: return Long.valueOf(value);
 				case SHORT: return Short.valueOf(value);

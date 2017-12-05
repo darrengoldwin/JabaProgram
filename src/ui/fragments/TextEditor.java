@@ -1,6 +1,7 @@
 package ui.fragments;
 
 import javax.swing.JTextArea;
+import javax.swing.JTextPane;
 
 import builder.ParserHandler;
 import utils.notifications.NotificationCenter;
@@ -10,7 +11,7 @@ import utils.notifications.Parameters;
 
 public class TextEditor implements NotificationListener{
 	
-	public JTextArea textEditorView;
+	public JTextPane textEditorView;
 	public String classNameText;
 	public final static String FILE_NAME_KEY = "FILE_NAME_KEY";
 	public final static String TEXT_READ_KEY = "TEXT_READ_KEY";
@@ -22,7 +23,7 @@ public class TextEditor implements NotificationListener{
 		NotificationCenter.getInstance().addObserver(Notifications.ON_CLASS_SAVE_STARTED, this);
 	}
 	
-	public void onCreateView(JTextArea textEditorView) {
+	public void onCreateView(JTextPane textEditorView) {
 		// Inflate the layout for this fragment
 		
 		this.classNameText = "JabaProgram";

@@ -71,6 +71,7 @@ public class MappingCommand implements ICommand {
 		System.out.println(TAG);
 		this.modifiedExp = this.parentExprCtx.getText();
 		
+		System.out.println(this.parentExprCtx.getText());
 		EvaluationCommand evaluationCommand = new EvaluationCommand(this.parentExprCtx);
 		evaluationCommand.execute();
 		MobiValue mobiValue = VariableSearcher.searchVariable(this.identifierString);
@@ -82,5 +83,11 @@ public class MappingCommand implements ICommand {
 	 */
 	public String getModifiedExp() {
 		return this.modifiedExp;
+	}
+
+
+	public String getIdentifierString() {
+		// TODO Auto-generated method stub
+		return this.identifierString;
 	}
 }

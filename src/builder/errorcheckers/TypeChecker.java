@@ -12,6 +12,8 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 
 import builder.BuildChecker;
 import builder.ErrorRepository;
+import initial.JabaParser.ArrayCreatorRestContext;
+import initial.JabaParser.ArrayInitializerContext;
 import initial.JabaParser.ExpressionContext;
 import initial.JabaParser.LiteralContext;
 import representation.MobiValue;
@@ -28,6 +30,7 @@ public class TypeChecker implements IErrorChecker, ParseTreeListener {
 
 	private MobiValue mobiValue;
 	private ExpressionContext exprCtx;
+	private ArrayCreatorRestContext arrCtx;
 	private int lineNumber;
 
 	public TypeChecker(MobiValue assignmentMobiValue, ExpressionContext exprCtx) {
@@ -38,11 +41,23 @@ public class TypeChecker implements IErrorChecker, ParseTreeListener {
 		this.lineNumber = firstToken.getLine();
 	}
 
+	public TypeChecker(MobiValue assignmentMobiValue, ArrayCreatorRestContext arrCtx) {
+		this.mobiValue = assignmentMobiValue;
+		this.arrCtx = arrCtx;
+
+		Token firstToken = exprCtx.getStart();
+		this.lineNumber = firstToken.getLine();
+	}
+
 	@Override
 	public void verify() {
 		ParseTreeWalker treeWalker = new ParseTreeWalker();
-		treeWalker.walk(this, this.exprCtx);
+		if(arrCtx != null)
+			treeWalker.walk(this, this.arrCtx);
+		else
+			treeWalker.walk(this, this.exprCtx);
 	}
+	
 
 	public static boolean isNumeric(String str) {
 		return str.matches("-?\\d+(\\.\\d+)?"); // match a number with optional '-' and decimal.

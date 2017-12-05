@@ -137,7 +137,6 @@ public class PrintCommand implements ICommand, ParseTreeListener {
 		
 		MobiArray mobiArray = (MobiArray) mobiValue.getValue();
 		MobiValue arrayMobiValue = mobiArray.getValueAt(evaluationCommand.getResult().intValue());
-		
 		this.statementToPrint += arrayMobiValue.getValue().toString();
 	}
 	
