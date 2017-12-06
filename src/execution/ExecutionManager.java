@@ -4,13 +4,19 @@
 package execution;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import console.Output;
 import execution.adders.FunctionExecutionAdder;
 import execution.adders.IExecutionAdder;
 import execution.adders.MainExecutionAdder;
 import execution.commands.ICommand;
+import initial.GUI;
 import representation.MobiFunction;
+import representation.MobiValue;
+import representation.MobiValueSearcher;
+import scope.ClassScope;
+import searching.VariableSearcher;
 import utils.notifications.NotificationCenter;
 import utils.notifications.NotificationListener;
 import utils.notifications.Notifications;
@@ -128,6 +134,7 @@ public class ExecutionManager implements NotificationListener {
 	 */
 	public void blockExecution() {
 		System.out.println("BLOCK!");
+		
 		this.executionMonitor.claimExecutionFlag();
 	}
 	

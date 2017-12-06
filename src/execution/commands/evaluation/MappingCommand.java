@@ -8,12 +8,18 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import analyzer.FunctionCallVerifier;
 import builder.errorcheckers.TypeChecker;
 import builder.errorcheckers.UndeclaredChecker;
+import console.Debug;
+import console.Output;
 import execution.ExecutionManager;
 import execution.commands.ICommand;
+import initial.GUI;
 import initial.JabaParser.ExpressionContext;
 import representation.MobiValue;
 import searching.VariableSearcher;
 import semantic.util.AssignmentUtils;
+import utils.notifications.NotificationCenter;
+import utils.notifications.Notifications;
+import utils.notifications.Parameters;
 
 /**
  * A mapping command that evaluates a given expression context then maps
@@ -30,7 +36,7 @@ public class MappingCommand implements ICommand {
 	private ExpressionContext parentExprCtx;
 	
 	private String modifiedExp;
-	
+	public boolean isBreakpoint = false; 
 	public MappingCommand(String identifierString, ExpressionContext exprCtx) {
 		System.out.println(TAG);
 		
@@ -73,7 +79,17 @@ public class MappingCommand implements ICommand {
 		
 		System.out.println(this.parentExprCtx.getText());
 		EvaluationCommand evaluationCommand = new EvaluationCommand(this.parentExprCtx);
+		Parameters params = new Parameters();
+		params.putExtra(Debug.COMMAND, evaluationCommand);
+		if(evaluationCommand.isBreakpoint()) {
+			NotificationCenter.getInstance().postNotification(Notifications.ON_BREAK_BEFORE_POINT, params);
+			//NotificationCenter.getInstance().postNotification(Notifications.ON_BREAK_AFTER_POINT, params);
+		}
 		evaluationCommand.execute();
+		
+		if(evaluationCommand.isBreakpoint()) {	
+			NotificationCenter.getInstance().postNotification(Notifications.ON_BREAK_AFTER_POINT, params);
+		}
 		MobiValue mobiValue = VariableSearcher.searchVariable(this.identifierString);
 		AssignmentUtils.assignAppropriateValue(mobiValue, evaluationCommand.getResult());
 	}
@@ -89,5 +105,12 @@ public class MappingCommand implements ICommand {
 	public String getIdentifierString() {
 		// TODO Auto-generated method stub
 		return this.identifierString;
+	}
+
+
+	@Override
+	public boolean isBreakpoint() {
+		// TODO Auto-generated method stub
+		return isBreakpoint;
 	}
 }

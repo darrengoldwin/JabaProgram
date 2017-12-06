@@ -4,6 +4,7 @@
 package analyzer;
 
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
@@ -13,6 +14,7 @@ import builder.errorcheckers.MultipleVarDecChecker;
 import builder.errorcheckers.TypeChecker;
 import execution.ExecutionManager;
 import execution.commands.evaluation.MappingCommand;
+import initial.GUI;
 import initial.JabaParser.VariableDeclaratorContext;
 import initial.JabaParser.VariableDeclaratorsContext;
 import representation.MobiValue;
@@ -77,7 +79,14 @@ public class FieldAnalyzer implements ParseTreeListener {
 					}
 				}
 				
+				Token firstToken = varCtx.getStart();
+				firstToken.getLine();
+				
 				MappingCommand mappingCommand = new MappingCommand(varCtx.variableDeclaratorId().getText(), varCtx.variableInitializer().expression());
+				
+				for(int i: GUI.getInstance().breakpoint) 
+					if(firstToken.getLine() == i)
+						mappingCommand.isBreakpoint = true;
 				ExecutionManager.getInstance().addCommand(mappingCommand);
 				
 				MobiValue declaredMobiValue = this.declaredClassScope.searchVariableIncludingLocal(varCtx.variableDeclaratorId().getText());

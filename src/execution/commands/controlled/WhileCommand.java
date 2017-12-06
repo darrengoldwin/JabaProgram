@@ -6,13 +6,19 @@ package execution.commands.controlled;
 import java.util.ArrayList;
 import java.util.List;
 
+import console.Debug;
+import console.Output;
 import execution.ExecutionManager;
 import execution.ExecutionMonitor;
 import execution.commands.ICommand;
 import execution.commands.utils.ConditionEvaluator;
+import initial.GUI;
 import initial.JabaParser.ParExpressionContext;
 import mapping.IValueMapper;
 import mapping.IdentifierMapper;
+import utils.notifications.NotificationCenter;
+import utils.notifications.Notifications;
+import utils.notifications.Parameters;
 
 /**
  * Representation of a while command
@@ -27,6 +33,7 @@ public class WhileCommand implements IControlledCommand {
 	
 	protected ParExpressionContext conditionalExpr;
 	protected String modifiedConditionExpr;
+	public boolean isBreakpoint = false;
 	
 	public WhileCommand(ParExpressionContext conditionalExpr) {
 		this.commandSequences = new ArrayList<ICommand>();
@@ -49,8 +56,18 @@ public class WhileCommand implements IControlledCommand {
 			//evaluate the given condition
 			while(ConditionEvaluator.evaluateCondition(this.conditionalExpr)) {
 				for(ICommand command : this.commandSequences) {
+					Parameters params = new Parameters();
+					params.putExtra(Debug.COMMAND, command);
+					if(command.isBreakpoint()) {
+						NotificationCenter.getInstance().postNotification(Notifications.ON_BREAK_BEFORE_POINT, params);
+						//NotificationCenter.getInstance().postNotification(Notifications.ON_BREAK_AFTER_POINT, params);
+					}
 					executionMonitor.tryExecution();
 					command.execute();
+					
+					if(command.isBreakpoint()) {	
+						NotificationCenter.getInstance().postNotification(Notifications.ON_BREAK_AFTER_POINT, params);
+					}
 				}
 				
 				this.identifyVariables(); //identify variables again to detect changes to such variables used.
@@ -82,6 +99,12 @@ public class WhileCommand implements IControlledCommand {
 	
 	public int getCommandCount() {
 		return this.commandSequences.size();
+	}
+
+	@Override
+	public boolean isBreakpoint() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

@@ -22,4 +22,7 @@ public class Notifications {
 	
 	public final static String ON_FOUND_SCAN_STATEMENT = "ON_FOUND_SCAN_STATEMENT"; //when a scan statement is found.
 	public final static String ON_SCAN_DIALOG_DISMISSED = "ON_SCAN_DIALOG_DISMISSED"; //when a scan dialog has been dismissed.
+	
+	public final static String ON_BREAK_BEFORE_POINT = "ON_BREAK_BEFORE_POINT"; //when a scan dialog has been dismissed.
+	public final static String ON_BREAK_AFTER_POINT = "ON_BREAK_AFTER_POINT"; //when a scan dialog has been dismissed.
 }

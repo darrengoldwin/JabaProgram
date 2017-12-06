@@ -4,6 +4,7 @@
 package analyzer;
 
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
@@ -12,6 +13,7 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import builder.errorcheckers.MultipleVarDecChecker;
 import execution.ExecutionManager;
 import execution.commands.evaluation.ArrayInitializeCommand;
+import initial.GUI;
 import initial.JabaParser.ArrayCreatorRestContext;
 import initial.JabaParser.CreatedNameContext;
 import initial.JabaParser.PrimitiveTypeContext;
@@ -140,7 +142,15 @@ public class ArrayAnalyzer implements ParseTreeListener{
 	}
 	
 	private void createInitializeCommand(ArrayCreatorRestContext arrayCreatorCtx) {
+		Token firstToken = arrayCreatorCtx.getStart();
+		firstToken.getLine();
 		ArrayInitializeCommand arrayInitializeCommand = new ArrayInitializeCommand(this.declaredArray, arrayCreatorCtx);
+		
+		for(int i: GUI.getInstance().breakpoint) {
+			if(firstToken.getLine() == i)
+				arrayInitializeCommand.isBreakpoint = true;
+		}
+		
 		ExecutionManager.getInstance().addCommand(arrayInitializeCommand);
 	}
 }

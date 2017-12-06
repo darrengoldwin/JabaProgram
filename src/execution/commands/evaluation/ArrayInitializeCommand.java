@@ -4,15 +4,17 @@
 package execution.commands.evaluation;
 
 import org.antlr.v4.runtime.Token;
-import org.antlr.v4.runtime.tree.ParseTreeWalker;
 
-import analyzer.FunctionCallVerifier;
 import builder.BuildChecker;
 import builder.ErrorRepository;
+import console.Debug;
 import execution.commands.ICommand;
 import initial.JabaParser.ArrayCreatorRestContext;
 import initial.JabaParser.ExpressionContext;
 import representation.MobiArray;
+import utils.notifications.NotificationCenter;
+import utils.notifications.Notifications;
+import utils.notifications.Parameters;
 
 /**
  * Represents an initialization of an array using new int[x] for example.
@@ -24,7 +26,7 @@ public class ArrayInitializeCommand implements ICommand {
 	
 	private MobiArray assignedMobiArray;
 	private ArrayCreatorRestContext arrayCreatorCtx;
-	
+	public boolean isBreakpoint = false; 
 	public ArrayInitializeCommand(MobiArray mobiArray, ArrayCreatorRestContext arrayCreatorCtx) {
 		System.out.println(TAG);
 		this.assignedMobiArray = mobiArray;
@@ -71,11 +73,27 @@ public class ArrayInitializeCommand implements ICommand {
 		
 		if(exprCtx != null) {
 			EvaluationCommand evaluationCommand = new EvaluationCommand(exprCtx);
+			Parameters params = new Parameters();
+			params.putExtra(Debug.COMMAND, evaluationCommand);
+			if(evaluationCommand.isBreakpoint()) {
+				NotificationCenter.getInstance().postNotification(Notifications.ON_BREAK_BEFORE_POINT, params);
+				//NotificationCenter.getInstance().postNotification(Notifications.ON_BREAK_AFTER_POINT, params);
+			}
 			evaluationCommand.execute();
+			
+			if(evaluationCommand.isBreakpoint()) {	
+				NotificationCenter.getInstance().postNotification(Notifications.ON_BREAK_AFTER_POINT, params);
+			}
 			
 			this.assignedMobiArray.initializeSize(evaluationCommand.getResult().intValue());
 		}
 		
+	}
+
+	@Override
+	public boolean isBreakpoint() {
+		// TODO Auto-generated method stub
+		return isBreakpoint;
 	}
 
 }

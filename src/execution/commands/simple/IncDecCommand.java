@@ -21,7 +21,7 @@ public class IncDecCommand implements ICommand {
 	private final static String TAG = "IncDecCommand";
 	private ExpressionContext exprCtx;
 	private int tokenSign;
-	
+	public boolean isBreakpoint = false;
 	public IncDecCommand(ExpressionContext exprCtx, int tokenSign) {
 		this.exprCtx = exprCtx;
 		this.tokenSign = tokenSign;
@@ -129,6 +129,12 @@ public class IncDecCommand implements ICommand {
 				mobiValue.setValue(String.valueOf(value));
 			}
 		}
+	}
+
+	@Override
+	public boolean isBreakpoint() {
+		// TODO Auto-generated method stub
+		return isBreakpoint;
 	}
 
 }

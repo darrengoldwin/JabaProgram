@@ -24,6 +24,7 @@ public class LocalScope implements IScope {
 	private ArrayList<LocalScope> childScopeList = null;
 	
 	private HashMap<String, MobiValue> localVariables = null;
+	public ArrayList<String> identifiers;
 	
 	public LocalScope() {
 		this.parentScope = null;
@@ -57,7 +58,7 @@ public class LocalScope implements IScope {
 	
 	public void addChild(LocalScope localScope) {
 		this.initializeChildList();
-		
+		localScope.identifiers = identifiers;
 		this.childScopeList.add(localScope);
 	}
 	
@@ -111,6 +112,7 @@ public class LocalScope implements IScope {
 		this.initializeLocalVariableMap();
 		
 		MobiValue mobiValue = MobiValue.createEmptyVariableFromKeywords(primitiveTypeString);
+		identifiers.add(identifierString);
 		this.localVariables.put(identifierString, mobiValue);
 	}
 	
@@ -127,6 +129,7 @@ public class LocalScope implements IScope {
 	
 	public void addMobiValue(String identifier, MobiValue mobiValue) {
 		this.initializeLocalVariableMap();
+		identifiers.add(identifier);
 		this.localVariables.put(identifier, mobiValue);
 	}
 	

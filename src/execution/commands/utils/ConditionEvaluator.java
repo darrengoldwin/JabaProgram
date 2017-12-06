@@ -3,9 +3,16 @@
  */
 package execution.commands.utils;
 
+import console.Debug;
+import console.Output;
+import execution.ExecutionManager;
 import execution.commands.evaluation.EvaluationCommand;
+import initial.GUI;
 import initial.JabaParser.ExpressionContext;
 import initial.JabaParser.ParExpressionContext;
+import utils.notifications.NotificationCenter;
+import utils.notifications.Notifications;
+import utils.notifications.Parameters;
 
 /**
  * Utility class for execution that evaluates a condition.
@@ -58,7 +65,17 @@ public class ConditionEvaluator {
 		}
 		
 		EvaluationCommand evaluationCommand = new EvaluationCommand(conditionExprCtx);
+		Parameters params = new Parameters();
+		params.putExtra(Debug.COMMAND, evaluationCommand);
+		if(evaluationCommand.isBreakpoint()) {
+			NotificationCenter.getInstance().postNotification(Notifications.ON_BREAK_BEFORE_POINT, params);
+			//NotificationCenter.getInstance().postNotification(Notifications.ON_BREAK_AFTER_POINT, params);
+		}
 		evaluationCommand.execute();
+		
+		if(evaluationCommand.isBreakpoint()) {	
+			NotificationCenter.getInstance().postNotification(Notifications.ON_BREAK_AFTER_POINT, params);
+		}
 		
 		int result = evaluationCommand.getResult().intValue();
 		
@@ -78,7 +95,17 @@ public class ConditionEvaluator {
 		}
 		
 		EvaluationCommand evaluationCommand = new EvaluationCommand(conditionExprCtx);
+		Parameters params = new Parameters();
+		params.putExtra(Debug.COMMAND, evaluationCommand);
+		if(evaluationCommand.isBreakpoint()) {
+			NotificationCenter.getInstance().postNotification(Notifications.ON_BREAK_BEFORE_POINT, params);
+			//NotificationCenter.getInstance().postNotification(Notifications.ON_BREAK_AFTER_POINT, params);
+		}
 		evaluationCommand.execute();
+		
+		if(evaluationCommand.isBreakpoint()) {	
+			NotificationCenter.getInstance().postNotification(Notifications.ON_BREAK_AFTER_POINT, params);
+		}
 		
 		int result = evaluationCommand.getResult().intValue();
 		

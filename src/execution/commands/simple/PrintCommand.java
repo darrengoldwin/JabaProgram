@@ -7,9 +7,12 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import builder.errorcheckers.UndeclaredChecker;
+import console.Debug;
 import console.Output;
+import execution.ExecutionManager;
 import execution.commands.ICommand;
 import execution.commands.evaluation.EvaluationCommand;
+import initial.GUI;
 import initial.JabaParser.ExpressionContext;
 import initial.JabaParser.LiteralContext;
 import initial.JabaParser.PrimaryContext;
@@ -18,6 +21,9 @@ import representation.MobiValue;
 import representation.MobiValue.PrimitiveType;
 import representation.MobiValueSearcher;
 import semantic.util.StringUtils;
+import utils.notifications.NotificationCenter;
+import utils.notifications.Notifications;
+import utils.notifications.Parameters;
 
 public class PrintCommand implements ICommand, ParseTreeListener {
 
@@ -28,7 +34,7 @@ public class PrintCommand implements ICommand, ParseTreeListener {
 	private String statementToPrint = "";
 	private boolean complexExpr = false;
 	private boolean arrayAccess = false;
-	
+	public boolean isBreakpoint = false; 
 	public PrintCommand(ExpressionContext expressionCtx) {
 		this.expressionCtx = expressionCtx;
 		
@@ -95,7 +101,17 @@ public class PrintCommand implements ICommand, ParseTreeListener {
 				//Console.log(LogType.DEBUG, "Complex expression detected: " +exprCtx.getText());
 
 				EvaluationCommand evaluationCommand = new EvaluationCommand(exprCtx);
+				Parameters params = new Parameters();
+				params.putExtra(Debug.COMMAND, evaluationCommand);
+				if(evaluationCommand.isBreakpoint()) {
+					NotificationCenter.getInstance().postNotification(Notifications.ON_BREAK_BEFORE_POINT, params);
+					//NotificationCenter.getInstance().postNotification(Notifications.ON_BREAK_AFTER_POINT, params);
+				}
 				evaluationCommand.execute();
+				
+				if(evaluationCommand.isBreakpoint()) {	
+					NotificationCenter.getInstance().postNotification(Notifications.ON_BREAK_AFTER_POINT, params);
+				}
 				
 				this.statementToPrint += evaluationCommand.getResult().toEngineeringString();
 			}
@@ -133,11 +149,27 @@ public class PrintCommand implements ICommand, ParseTreeListener {
 		ExpressionContext arrayIndexExprCtx = parentExprCtx.expression(1);
 		
 		EvaluationCommand evaluationCommand = new EvaluationCommand(arrayIndexExprCtx);
+		Parameters params = new Parameters();
+		params.putExtra(Debug.COMMAND, evaluationCommand);
+		if(evaluationCommand.isBreakpoint()) {
+			NotificationCenter.getInstance().postNotification(Notifications.ON_BREAK_BEFORE_POINT, params);
+			//NotificationCenter.getInstance().postNotification(Notifications.ON_BREAK_AFTER_POINT, params);
+		}
 		evaluationCommand.execute();
+		
+		if(evaluationCommand.isBreakpoint()) {	
+			NotificationCenter.getInstance().postNotification(Notifications.ON_BREAK_AFTER_POINT, params);
+		}
 		
 		MobiArray mobiArray = (MobiArray) mobiValue.getValue();
 		MobiValue arrayMobiValue = mobiArray.getValueAt(evaluationCommand.getResult().intValue());
 		this.statementToPrint += arrayMobiValue.getValue().toString();
+	}
+
+	@Override
+	public boolean isBreakpoint() {
+		// TODO Auto-generated method stub
+		return isBreakpoint;
 	}
 	
 	

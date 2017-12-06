@@ -7,14 +7,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 import analyzer.LocalVariableAnalyzer;
+import console.Debug;
+import console.Output;
 import execution.ExecutionManager;
 import execution.ExecutionMonitor;
 import execution.commands.ICommand;
 import execution.commands.utils.ConditionEvaluator;
+import initial.GUI;
 import initial.JabaParser.ExpressionContext;
 import initial.JabaParser.LocalVariableDeclarationContext;
 import mapping.IValueMapper;
 import mapping.IdentifierMapper;
+import utils.notifications.NotificationCenter;
+import utils.notifications.Notifications;
+import utils.notifications.Parameters;
 
 /**
  * Represents the for command
@@ -33,6 +39,7 @@ public class ForCommand implements IControlledCommand {
 	
 	private String modifiedConditionExpr;
 	
+	public boolean isBreakpoint = false; 
 	public ForCommand(LocalVariableDeclarationContext localVarDecCtx, ExpressionContext conditionalExpr, ICommand updateCommand) {
 		this.localVarDecCtx = localVarDecCtx;
 		this.conditionalExpr = conditionalExpr;
@@ -55,12 +62,34 @@ public class ForCommand implements IControlledCommand {
 		try {
 			//evaluate the given condition
 			while(ConditionEvaluator.evaluateCondition(this.conditionalExpr)) {
+				
 				for(ICommand command : this.commandSequences) {
+					Parameters params = new Parameters();
+					params.putExtra(Debug.COMMAND, command);
+					if(command.isBreakpoint()) {
+						NotificationCenter.getInstance().postNotification(Notifications.ON_BREAK_BEFORE_POINT, params);
+						//NotificationCenter.getInstance().postNotification(Notifications.ON_BREAK_AFTER_POINT, params);
+					}
 					executionMonitor.tryExecution();
 					command.execute();
+					
+					if(command.isBreakpoint()) {	
+						NotificationCenter.getInstance().postNotification(Notifications.ON_BREAK_AFTER_POINT, params);
+					}
 				}
 				
-				this.updateCommand.execute(); //execute the update command
+				Parameters params = new Parameters();
+				params.putExtra(Debug.COMMAND, this.updateCommand);
+				if(updateCommand.isBreakpoint()) {
+					NotificationCenter.getInstance().postNotification(Notifications.ON_BREAK_BEFORE_POINT, params);
+					//NotificationCenter.getInstance().postNotification(Notifications.ON_BREAK_AFTER_POINT, params);
+				}
+				executionMonitor.tryExecution();
+				updateCommand.execute();
+				
+				if(updateCommand.isBreakpoint()) {	
+					NotificationCenter.getInstance().postNotification(Notifications.ON_BREAK_AFTER_POINT, params);
+				}
 				this.identifyVariables(); //identify variables again to detect changes to such variables used.
 			}
 			
@@ -104,6 +133,12 @@ public class ForCommand implements IControlledCommand {
 	
 	public int getCommandCount() {
 		return this.commandSequences.size();
+	}
+
+	@Override
+	public boolean isBreakpoint() {
+		// TODO Auto-generated method stub
+		return isBreakpoint;
 	}
 
 }

@@ -8,16 +8,22 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import builder.errorcheckers.TypeChecker;
+import console.Debug;
+import console.Output;
 import execution.ExecutionManager;
 import execution.ExecutionMonitor;
 import execution.FunctionTracker;
 import execution.commands.ICommand;
 import execution.commands.controlled.IControlledCommand;
+import initial.GUI;
 import initial.JabaParser.ExpressionContext;
 import representation.MobiValue.PrimitiveType;
 import scope.ClassScope;
 import scope.LocalScope;
 import semantic.util.RecognizedKeywords;
+import utils.notifications.NotificationCenter;
+import utils.notifications.Notifications;
+import utils.notifications.Parameters;
 
 /**
  * Represents the intermediate representation of a function
@@ -49,7 +55,7 @@ public class MobiFunction implements IControlledCommand{
 	private LinkedHashMap<String, MobiValue> parameterValues;	//the list of parameters accepted that follows the 'call-by-value' standard.
 	private MobiValue returnValue; //the return value of the function. null if it's a void type
 	private FunctionType returnType = FunctionType.VOID_TYPE; //the return type of the function
-	
+	public boolean isBreakpoint =false;
 	
 	public MobiFunction() {
 		this.commandSequences = new ArrayList<ICommand>();
@@ -230,8 +236,20 @@ public class MobiFunction implements IControlledCommand{
 		FunctionTracker.getInstance().reportEnterFunction(this);
 		try {
 			for(ICommand command : this.commandSequences) {
+				
+				Parameters params = new Parameters();
+				params.putExtra(Debug.COMMAND, command);
+				if(command.isBreakpoint()) {
+					NotificationCenter.getInstance().postNotification(Notifications.ON_BREAK_BEFORE_POINT, params);
+					//NotificationCenter.getInstance().postNotification(Notifications.ON_BREAK_AFTER_POINT, params);
+				}
 				executionMonitor.tryExecution();
 				command.execute();
+				
+				if(command.isBreakpoint()) {	
+					NotificationCenter.getInstance().postNotification(Notifications.ON_BREAK_AFTER_POINT, params);
+				}
+				
 			}
 
 		} catch(InterruptedException e) {
@@ -277,5 +295,11 @@ public class MobiFunction implements IControlledCommand{
 		}
 		
 		return FunctionType.VOID_TYPE;
+	}
+
+	@Override
+	public boolean isBreakpoint() {
+		// TODO Auto-generated method stub
+		return isBreakpoint;
 	}
 }

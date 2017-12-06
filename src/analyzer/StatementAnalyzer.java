@@ -3,6 +3,7 @@ package analyzer;
 
 import java.util.List;
 
+import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import builder.errorcheckers.UndeclaredChecker;
@@ -13,9 +14,11 @@ import execution.commands.controlled.IConditionalCommand;
 import execution.commands.controlled.IControlledCommand;
 import execution.commands.controlled.IfCommand;
 import execution.commands.controlled.WhileCommand;
+import execution.commands.evaluation.MappingCommand;
 import execution.commands.simple.PrintCommand;
 import execution.commands.simple.ReturnCommand;
 import execution.commands.simple.ScanCommand;
+import initial.GUI;
 import initial.JabaLexer;
 import initial.JabaParser.BlockContext;
 import initial.JabaParser.ExpressionContext;
@@ -142,7 +145,14 @@ public class StatementAnalyzer {
 	}
 	
 	private void handlePrintStatement(StatementContext ctx) {
+		
 		PrintCommand printCommand = new PrintCommand(ctx.expression(0));
+		
+		Token firstToken = ctx.getStart();
+		firstToken.getLine();
+		for(int i: GUI.getInstance().breakpoint) 
+			if(firstToken.getLine() == i)
+				printCommand.isBreakpoint = true;
 		
 		StatementControlOverseer statementControl = StatementControlOverseer.getInstance();
 		//add to conditional controlled command
@@ -162,6 +172,7 @@ public class StatementAnalyzer {
 			controlledCommand.addCommand(printCommand);
 		}
 		else {
+			
 			ExecutionManager.getInstance().addCommand(printCommand);
 		}
 		
@@ -171,7 +182,11 @@ public class StatementAnalyzer {
 		System.out.println(ctx.StringLiteral().getText());
 		ScanCommand scanCommand = new ScanCommand(ctx.StringLiteral().getText(), ctx.Identifier().getText());
 		UndeclaredChecker.verifyVarOrConstForScan(ctx.Identifier().getText(), ctx);
-		
+		Token firstToken = ctx.getStart();
+		firstToken.getLine();
+		for(int i: GUI.getInstance().breakpoint) 
+			if(firstToken.getLine() == i)
+				scanCommand.isBreakPoint = true;
 		StatementControlOverseer statementControl = StatementControlOverseer.getInstance();
 		//add to conditional controlled command
 		if(statementControl.isInConditionalCommand()) {
@@ -190,6 +205,7 @@ public class StatementAnalyzer {
 			controlledCommand.addCommand(scanCommand);
 		}
 		else {
+			
 			ExecutionManager.getInstance().addCommand(scanCommand);
 		}
 		
@@ -197,10 +213,11 @@ public class StatementAnalyzer {
 	
 	private void handleReturnStatement(ExpressionContext exprCtx) {
 		ReturnCommand returnCommand = new ReturnCommand(exprCtx, ExecutionManager.getInstance().getCurrentFunction());
-		/*
-		 * TODO: Return commands supposedly stops a controlled or conditional command and returns back the control to the caller.
-		 * Find a way to halt such commands if they are inside a controlled command.
-		 */
+		Token firstToken = exprCtx.getStart();
+		firstToken.getLine();
+		for(int i: GUI.getInstance().breakpoint) 
+			if(firstToken.getLine() == i)
+				returnCommand.isBreakpoint = true;
 		StatementControlOverseer statementControl = StatementControlOverseer.getInstance();
 		
 		if(statementControl.isInConditionalCommand()) {
@@ -220,6 +237,7 @@ public class StatementAnalyzer {
 			controlledCommand.addCommand(returnCommand);
 		}
 		else {
+			
 			ExecutionManager.getInstance().addCommand(returnCommand);
 		}
 		

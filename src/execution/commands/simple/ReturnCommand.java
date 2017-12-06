@@ -9,14 +9,21 @@ import builder.BuildChecker;
 import builder.ErrorRepository;
 import builder.errorcheckers.TypeChecker;
 import builder.errorcheckers.UndeclaredChecker;
+import console.Debug;
+import console.Output;
+import execution.ExecutionManager;
 import execution.commands.ICommand;
 import execution.commands.evaluation.EvaluationCommand;
+import initial.GUI;
 import initial.JabaParser.ExpressionContext;
 import representation.MobiFunction;
 import representation.MobiValue;
 import representation.MobiValue.PrimitiveType;
 import searching.VariableSearcher;
 import semantic.util.AssignmentUtils;
+import utils.notifications.NotificationCenter;
+import utils.notifications.Notifications;
+import utils.notifications.Parameters;
 
 /**
  * Represents a return command which is specially used by a function.
@@ -29,7 +36,7 @@ public class ReturnCommand implements ICommand {
 
 	private ExpressionContext expressionCtx;
 	private MobiFunction assignedMobiFunction;
-
+	public boolean isBreakpoint = false;
 	public ReturnCommand(ExpressionContext expressionCtx, MobiFunction mobiFunction) {
 		System.out.println(TAG);
 		this.expressionCtx = expressionCtx;
@@ -94,13 +101,29 @@ public class ReturnCommand implements ICommand {
 	public void execute() {
 		System.out.println(TAG);
 		EvaluationCommand evaluationCommand = new EvaluationCommand(this.expressionCtx);
+		Parameters params = new Parameters();
+		params.putExtra(Debug.COMMAND, evaluationCommand);
+		if(evaluationCommand.isBreakpoint()) {
+			NotificationCenter.getInstance().postNotification(Notifications.ON_BREAK_BEFORE_POINT, params);
+			//NotificationCenter.getInstance().postNotification(Notifications.ON_BREAK_AFTER_POINT, params);
+		}
 		evaluationCommand.execute();
+		
+		if(evaluationCommand.isBreakpoint()) {	
+			NotificationCenter.getInstance().postNotification(Notifications.ON_BREAK_AFTER_POINT, params);
+		}
 
 		MobiValue mobiValue = this.assignedMobiFunction.getReturnValue();
 
 		AssignmentUtils.assignAppropriateValue(mobiValue, evaluationCommand.getResult());
 		// Console.log(LogType.DEBUG,"Return value is: "
 		// +evaluationCommand.getResult().toEngineeringString());
+	}
+
+	@Override
+	public boolean isBreakpoint() {
+		// TODO Auto-generated method stub
+		return isBreakpoint;
 	}
 
 }

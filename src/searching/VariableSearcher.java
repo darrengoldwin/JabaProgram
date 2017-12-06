@@ -3,6 +3,9 @@
  */
 package searching;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import builder.ParserHandler;
 import execution.FunctionTracker;
 import representation.MobiFunction;
@@ -53,6 +56,12 @@ public class VariableSearcher {
 	
 	public static MobiValue searchVariableInClass(ClassScope classScope, String identifierString) {
 		return classScope.searchVariable(identifierString);
+	}
+	
+	public static ArrayList<String> getAllVariables() {
+		ClassScope classScope = SymbolTable.getInstance().getClassScope(ParserHandler.getInstance().getCurrentClassName());
+		
+		return classScope.getAllVariables();
 	}
 	
 }

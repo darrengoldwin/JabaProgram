@@ -6,6 +6,7 @@ package analyzer;
 import java.util.List;
 
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
@@ -14,11 +15,21 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 import builder.errorcheckers.ThisKeywordChecker;
 import execution.ExecutionManager;
 import execution.commands.ICommand;
+import execution.commands.controlled.ForCommand;
 import execution.commands.controlled.IConditionalCommand;
 import execution.commands.controlled.IControlledCommand;
+import execution.commands.controlled.IfCommand;
+import execution.commands.controlled.WhileCommand;
+import execution.commands.evaluation.ArrayInitializeCommand;
 import execution.commands.evaluation.AssignmentCommand;
+import execution.commands.evaluation.EvaluationCommand;
+import execution.commands.evaluation.MappingCommand;
 import execution.commands.simple.FunctionCallCommand;
 import execution.commands.simple.IncDecCommand;
+import execution.commands.simple.PrintCommand;
+import execution.commands.simple.ReturnCommand;
+import execution.commands.simple.ScanCommand;
+import initial.GUI;
 import initial.JabaLexer;
 import initial.JabaParser.ExpressionContext;
 import initial.JabaParser.StatementExpressionContext;
@@ -116,6 +127,35 @@ public class StatementExpressionAnalyzer implements ParseTreeListener {
 	
 	private void handleStatementExecution(ICommand command) {
 		
+		Token firstToken = readRightHandExprCtx.getStart();
+		firstToken.getLine();
+		for(int i: GUI.getInstance().breakpoint) 
+			if(firstToken.getLine() == i) {
+				if(command.getClass().toString().equals(AssignmentCommand.class.toString()))
+					((AssignmentCommand) command).isBreakpoint = true;
+				else if(command.getClass().toString().equals(ArrayInitializeCommand.class.toString()))
+					((ArrayInitializeCommand) command).isBreakpoint = true;
+				else if(command.getClass().toString().equals(EvaluationCommand.class.toString()))
+					((EvaluationCommand) command).isBreakpoint = true;
+				else if(command.getClass().toString().equals(MappingCommand.class.toString()))
+					((MappingCommand) command).isBreakpoint = true;
+				else if(command.getClass().toString().equals(FunctionCallCommand.class.toString()))
+					((FunctionCallCommand) command).isBreakpoint = true;
+				else if(command.getClass().toString().equals(IncDecCommand.class.toString()))
+					((IncDecCommand) command).isBreakpoint = true;
+				else if(command.getClass().toString().equals(PrintCommand.class.toString()))
+					((PrintCommand) command).isBreakpoint = true;
+				else if(command.getClass().toString().equals(ReturnCommand.class.toString()))
+					((ReturnCommand) command).isBreakpoint = true;
+				else if(command.getClass().toString().equals(ScanCommand.class.toString()))
+					((ScanCommand) command).isBreakPoint = true;
+				else if(command.getClass().toString().equals(WhileCommand.class.toString()))
+					((WhileCommand) command).isBreakpoint = true;
+				else if(command.getClass().toString().equals(IfCommand.class.toString()))
+					((IfCommand) command).isBreakpoint = true;
+				else if(command.getClass().toString().equals(ForCommand.class.toString()))
+					((ForCommand) command).isBreakpoint = true;
+			}
 		StatementControlOverseer statementControl = StatementControlOverseer.getInstance();
 		
 		//add to conditional controlled command
@@ -135,6 +175,7 @@ public class StatementExpressionAnalyzer implements ParseTreeListener {
 			controlledCommand.addCommand(command);
 		}
 		else {
+			
 			ExecutionManager.getInstance().addCommand(command);
 		}
 		

@@ -12,14 +12,20 @@ import analyzer.FunctionCallVerifier;
 import builder.errorcheckers.ConstChecker;
 import builder.errorcheckers.TypeChecker;
 import builder.errorcheckers.UndeclaredChecker;
+import console.Debug;
+import console.Output;
 import execution.ExecutionManager;
 import execution.commands.ICommand;
+import initial.GUI;
 import initial.JabaLexer;
 import initial.JabaParser.ExpressionContext;
 import representation.MobiArray;
 import representation.MobiValue;
 import searching.VariableSearcher;
 import semantic.util.AssignmentUtils;
+import utils.notifications.NotificationCenter;
+import utils.notifications.Notifications;
+import utils.notifications.Parameters;
 
 public class AssignmentCommand implements ICommand{
 
@@ -27,7 +33,8 @@ public class AssignmentCommand implements ICommand{
 
 	private ExpressionContext leftHandExprCtx;
 	private ExpressionContext rightHandExprCtx;
-
+	public boolean isBreakpoint = false; 
+	
 	public AssignmentCommand(ExpressionContext leftHandExprCtx,
 			ExpressionContext rightHandExprCtx) {
 		System.out.println(TAG);
@@ -78,8 +85,18 @@ public class AssignmentCommand implements ICommand{
 		
 		try {
 			EvaluationCommand evaluationCommand = new EvaluationCommand(this.rightHandExprCtx);
+			
+			Parameters params = new Parameters();
+			params.putExtra(Debug.COMMAND, evaluationCommand);
+			if(evaluationCommand.isBreakpoint()) {
+				NotificationCenter.getInstance().postNotification(Notifications.ON_BREAK_BEFORE_POINT, params);
+				//NotificationCenter.getInstance().postNotification(Notifications.ON_BREAK_AFTER_POINT, params);
+			}
 			evaluationCommand.execute();
 			
+			if(evaluationCommand.isBreakpoint()) {	
+				NotificationCenter.getInstance().postNotification(Notifications.ON_BREAK_AFTER_POINT, params);
+			}
 			if(this.isLeftHandArrayAccessor()) {
 				
 				this.handleArrayAssignment(evaluationCommand.getResult().toEngineeringString());
@@ -127,8 +144,17 @@ public class AssignmentCommand implements ICommand{
 		MobiArray mobiArray = (MobiArray) mobiValue.getValue();
 		
 		EvaluationCommand evaluationCommand = new EvaluationCommand(arrayIndexExprCtx);
+		Parameters params = new Parameters();
+		params.putExtra(Debug.COMMAND, evaluationCommand);
+		if(evaluationCommand.isBreakpoint()) {
+			NotificationCenter.getInstance().postNotification(Notifications.ON_BREAK_BEFORE_POINT, params);
+			//NotificationCenter.getInstance().postNotification(Notifications.ON_BREAK_AFTER_POINT, params);
+		}
 		evaluationCommand.execute();
 		
+		if(evaluationCommand.isBreakpoint()) {	
+			NotificationCenter.getInstance().postNotification(Notifications.ON_BREAK_AFTER_POINT, params);
+		}
 		//create a new array value to replace value at specified index
 		MobiValue newArrayValue = new MobiValue(null, mobiArray.getPrimitiveType());
 		
@@ -147,5 +173,11 @@ public class AssignmentCommand implements ICommand{
 	public ExpressionContext getLeftHandExprCtx() {
 		// TODO Auto-generated method stub
 		return leftHandExprCtx;
+	}
+
+	@Override
+	public boolean isBreakpoint() {
+		// TODO Auto-generated method stub
+		return isBreakpoint;
 	}
 }

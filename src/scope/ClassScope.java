@@ -3,6 +3,7 @@
  */
 package scope;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import representation.MobiFunction;
@@ -22,6 +23,8 @@ public class ClassScope implements IScope {
 	private HashMap<String, MobiFunction> publicFunctions;
 	private HashMap<String, MobiFunction> privateFunctions;
 	
+	public ArrayList<String> identifiers;
+	
 	private LocalScope parentLocalScope; //represents the parent local scope which is the local scope covered by the main() function. Other classes may not contain this.
 	
 	public ClassScope(String className) {
@@ -32,18 +35,25 @@ public class ClassScope implements IScope {
 		
 		this.publicFunctions = new HashMap<String, MobiFunction>();
 		this.privateFunctions = new HashMap<String, MobiFunction>();
+		
+		identifiers = new ArrayList<String>();
 	}
 	
 	public String getClassName() {
 		return this.className;
 	}
-	
+	public ArrayList<String> getAllVariables() {
+		
+		return identifiers;
+	}
 	
 	/*
 	 * Sets the parent local scope which is instantiated if this class contains a main function.
 	 */
 	public void setParentLocalScope(LocalScope localScope) {
+		
 		this.parentLocalScope = localScope;
+		localScope.identifiers = this.identifiers;
 	}
 	
 	@Override
@@ -68,7 +78,8 @@ public class ClassScope implements IScope {
 		
 		//create empty mobi value
 		MobiValue mobiValue = MobiValue.createEmptyVariableFromKeywords(primitiveTypeString);
-		
+		System.out.println("Aaaaaaaaaaaaaaaaaaaa");
+		identifiers.add(identifierString);
 		if(isPublic) {
 			this.publicVariables.put(identifierString, mobiValue);
 			//Console.log(LogType.DEBUG, "Created public variable " +identifierString+ " type: " +mobiValue.getPrimitiveType());
@@ -124,6 +135,7 @@ public class ClassScope implements IScope {
 	}
 	
 	public void addPrivateMobiFunction(String identifier, MobiFunction mobiFunction) {
+
 		this.privateFunctions.put(identifier, mobiFunction);
 		//Console.log(LogType.DEBUG, "Created private function " +identifier+ " with return type " +mobiFunction.getReturnType());
 	}
@@ -135,7 +147,8 @@ public class ClassScope implements IScope {
 	
 	public void addMobiValue(String accessControlModifier, String identifier, MobiValue mobiValue) {
 		boolean isPublic = true;
-		
+		System.out.println("Aaaaaaaaaaaaaaaaaaaa");
+		identifiers.add(identifier);
 		if(RecognizedKeywords.matchesKeyword(RecognizedKeywords.CLASS_MODIFIER_PRIVATE, accessControlModifier)) {
 			isPublic = false;
 		}

@@ -5,10 +5,25 @@ package statements;
 
 import java.util.Stack;
 
+import org.antlr.v4.runtime.Token;
+
 import execution.ExecutionManager;
 import execution.commands.ICommand;
+import execution.commands.controlled.ForCommand;
 import execution.commands.controlled.IConditionalCommand;
 import execution.commands.controlled.IControlledCommand;
+import execution.commands.controlled.IfCommand;
+import execution.commands.controlled.WhileCommand;
+import execution.commands.evaluation.ArrayInitializeCommand;
+import execution.commands.evaluation.AssignmentCommand;
+import execution.commands.evaluation.EvaluationCommand;
+import execution.commands.evaluation.MappingCommand;
+import execution.commands.simple.FunctionCallCommand;
+import execution.commands.simple.IncDecCommand;
+import execution.commands.simple.PrintCommand;
+import execution.commands.simple.ReturnCommand;
+import execution.commands.simple.ScanCommand;
+import initial.GUI;
 
 /**
  * A singleton class that detects if a certain statement is inside a controlled statement
@@ -120,8 +135,36 @@ public class StatementControlOverseer {
 		
 		//we arrived at the root node, therefore we add this now to the execution manager
 		if(this.procedureCallStack.size() == 1) {
-			ICommand rootCommand = this.procedureCallStack.pop();
-			ExecutionManager.getInstance().addCommand(rootCommand);
+			ICommand command = this.procedureCallStack.pop();
+//			Token firstToken = comma.getStart();
+//			firstToken.getLine();
+//			if(firstToken.getLine() == GUI.getInstance().breakpoint) {
+//				if(command.getClass().toString().equals(AssignmentCommand.class.toString()))
+//					((AssignmentCommand) command).isBreakpoint = true;
+//				else if(command.getClass().toString().equals(ArrayInitializeCommand.class.toString()))
+//					((ArrayInitializeCommand) command).isBreakpoint = true;
+//				else if(command.getClass().toString().equals(EvaluationCommand.class.toString()))
+//					((EvaluationCommand) command).isBreakpoint = true;
+//				else if(command.getClass().toString().equals(MappingCommand.class.toString()))
+//					((MappingCommand) command).isBreakpoint = true;
+//				else if(command.getClass().toString().equals(FunctionCallCommand.class.toString()))
+//					((FunctionCallCommand) command).isBreakpoint = true;
+//				else if(command.getClass().toString().equals(IncDecCommand.class.toString()))
+//					((IncDecCommand) command).isBreakpoint = true;
+//				else if(command.getClass().toString().equals(PrintCommand.class.toString()))
+//					((PrintCommand) command).isBreakpoint = true;
+//				else if(command.getClass().toString().equals(ReturnCommand.class.toString()))
+//					((ReturnCommand) command).isBreakpoint = true;
+//				else if(command.getClass().toString().equals(ScanCommand.class.toString()))
+//					((ScanCommand) command).isBreakPoint = true;
+//				else if(command.getClass().toString().equals(WhileCommand.class.toString()))
+//					((WhileCommand) command).isBreakpoint = true;
+//				else if(command.getClass().toString().equals(IfCommand.class.toString()))
+//					((IfCommand) command).isBreakpoint = true;
+//				else if(command.getClass().toString().equals(ForCommand.class.toString()))
+//					((ForCommand) command).isBreakpoint = true;
+//			}
+			ExecutionManager.getInstance().addCommand(command);
 			
 			this.activeControlledCommand = null;
 		}

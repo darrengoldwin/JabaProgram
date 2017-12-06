@@ -28,7 +28,7 @@ public class ScanCommand implements ICommand, NotificationListener{
 	
 	private String messageToDisplay;
 	private String identifier;
-	
+	public boolean isBreakPoint = false;
 	public ScanCommand(String messageToDisplay, String identifier) {
 		this.messageToDisplay = StringUtils.removeQuotes(messageToDisplay);
 		this.identifier = identifier;
@@ -66,6 +66,11 @@ public class ScanCommand implements ICommand, NotificationListener{
 			this.acquireInputFromUser(params);
 		}
 		
+	}
+	@Override
+	public boolean isBreakpoint() {
+		// TODO Auto-generated method stub
+		return isBreakPoint;
 	}
 
 }

@@ -4,6 +4,7 @@
 package analyzer;
 
 import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
@@ -11,8 +12,11 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 
 import builder.errorcheckers.MultipleVarDecChecker;
 import builder.errorcheckers.TypeChecker;
+import console.Debug;
+import console.Output;
 import execution.ExecutionManager;
 import execution.commands.evaluation.MappingCommand;
+import initial.GUI;
 import initial.JabaParser.ClassOrInterfaceTypeContext;
 import initial.JabaParser.LocalVariableDeclarationContext;
 import initial.JabaParser.PrimitiveTypeContext;
@@ -23,6 +27,9 @@ import scope.LocalScope;
 import scope.LocalScopeCreator;
 import semantic.util.IdentifiedTokens;
 import semantic.util.RecognizedKeywords;
+import utils.notifications.NotificationCenter;
+import utils.notifications.Notifications;
+import utils.notifications.Parameters;
 
 /**
  * Analyzes a local variable declaration
@@ -154,13 +161,30 @@ public class LocalVariableAnalyzer implements ParseTreeListener {
 	 * Otherwise, it proceeds normally.
 	 */
 	private void processMapping(VariableDeclaratorContext varCtx) {
+		Token firstToken = varCtx.getStart();
+		firstToken.getLine();
 		
 		if(this.executeMappingImmediate) {
 			MappingCommand mappingCommand = new MappingCommand(varCtx.variableDeclaratorId().getText(), varCtx.variableInitializer().expression());
+			Parameters params = new Parameters();
+			params.putExtra(Debug.COMMAND, mappingCommand);
+			if(mappingCommand.isBreakpoint()) {
+				NotificationCenter.getInstance().postNotification(Notifications.ON_BREAK_BEFORE_POINT, params);
+				//NotificationCenter.getInstance().postNotification(Notifications.ON_BREAK_AFTER_POINT, params);
+			}
 			mappingCommand.execute();
+			
+			if(mappingCommand.isBreakpoint()) {	
+				NotificationCenter.getInstance().postNotification(Notifications.ON_BREAK_AFTER_POINT, params);
+			}
 		}
 		else {
+			
 			MappingCommand mappingCommand = new MappingCommand(varCtx.variableDeclaratorId().getText(), varCtx.variableInitializer().expression());
+			
+			for(int i: GUI.getInstance().breakpoint) 
+				if(firstToken.getLine() == i)
+					mappingCommand.isBreakpoint = true;
 			ExecutionManager.getInstance().addCommand(mappingCommand);
 		}
 	}

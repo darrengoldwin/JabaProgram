@@ -13,7 +13,11 @@ import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import builder.ParserHandler;
+import console.Debug;
+import console.Output;
+import execution.ExecutionManager;
 import execution.commands.ICommand;
+import initial.GUI;
 import initial.JabaParser.ArrayCreatorRestContext;
 import initial.JabaParser.ArrayInitializerContext;
 import initial.JabaParser.ExpressionContext;
@@ -25,6 +29,9 @@ import searching.VariableSearcher;
 import semantic.util.Expression;
 import semantic.util.RecognizedKeywords;
 import semantics.symboltable.SymbolTable;
+import utils.notifications.NotificationCenter;
+import utils.notifications.Notifications;
+import utils.notifications.Parameters;
 
 /**
  * A command that evaluates a given expression at runtime.
@@ -38,7 +45,7 @@ public class EvaluationCommand implements ICommand, ParseTreeListener {
 	private String modifiedExp;
 	private int index;
 	private BigDecimal resultValue;
-	
+	public boolean isBreakpoint = false; 
 	public EvaluationCommand(ExpressionContext exprCtx) {
 		
 		this.parentExprCtx = exprCtx;
@@ -185,7 +192,17 @@ public class EvaluationCommand implements ICommand, ParseTreeListener {
 				ExpressionContext parameterExprCtx = exprCtxList.get(i);
 
 				EvaluationCommand evaluationCommand = new EvaluationCommand(parameterExprCtx);
+				Parameters params = new Parameters();
+				params.putExtra(Debug.COMMAND, evaluationCommand);
+				if(evaluationCommand.isBreakpoint()) {
+					NotificationCenter.getInstance().postNotification(Notifications.ON_BREAK_BEFORE_POINT, params);
+					//NotificationCenter.getInstance().postNotification(Notifications.ON_BREAK_AFTER_POINT, params);
+				}
 				evaluationCommand.execute();
+				
+				if(evaluationCommand.isBreakpoint()) {	
+					NotificationCenter.getInstance().postNotification(Notifications.ON_BREAK_AFTER_POINT, params);
+				}
 
 				mobiFunction.mapParameterByValueAt(evaluationCommand.getResult().toEngineeringString(), i);
 			}
@@ -220,5 +237,11 @@ public class EvaluationCommand implements ICommand, ParseTreeListener {
 	 */
 	public BigDecimal getResult() {
 		return this.resultValue;
+	}
+
+	@Override
+	public boolean isBreakpoint() {
+		// TODO Auto-generated method stub
+		return isBreakpoint;
 	}
 }

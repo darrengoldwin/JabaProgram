@@ -3,11 +3,16 @@
  */
 package execution;
 
+import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 
+import console.Debug;
+import console.Output;
 import execution.commands.ICommand;
+import initial.GUI;
 import utils.notifications.NotificationCenter;
 import utils.notifications.Notifications;
+import utils.notifications.Parameters;
 
 /**
  * A worker thread that handles the execution of actions from ExecutionManager
@@ -37,8 +42,20 @@ public class ExecutionThread extends Thread {
 		try {
 			
 			for(ICommand command : this.executionList) {
-				this.executionMonitor.tryExecution();
+				
+				Parameters params = new Parameters();
+				params.putExtra(Debug.COMMAND, command);
+				if(command.isBreakpoint()) {
+					NotificationCenter.getInstance().postNotification(Notifications.ON_BREAK_BEFORE_POINT, params);
+					//NotificationCenter.getInstance().postNotification(Notifications.ON_BREAK_AFTER_POINT, params);
+				}
+				executionMonitor.tryExecution();
 				command.execute();
+				
+				if(command.isBreakpoint()) {	
+					NotificationCenter.getInstance().postNotification(Notifications.ON_BREAK_AFTER_POINT, params);
+				}
+			
 			}
 		}
 		catch(InterruptedException e) {

@@ -3,10 +3,16 @@
  */
 package execution.commands.controlled;
 
+import console.Debug;
+import console.Output;
 import execution.ExecutionManager;
 import execution.ExecutionMonitor;
 import execution.commands.ICommand;
+import initial.GUI;
 import initial.JabaParser.ParExpressionContext;
+import utils.notifications.NotificationCenter;
+import utils.notifications.Notifications;
+import utils.notifications.Parameters;
 
 /**
  * Represents a do while command which is essentially a modified while command
@@ -41,8 +47,19 @@ public class DoWhileCommand extends WhileCommand {
 		
 		try {
 			for(ICommand command : this.commandSequences) {
+				Parameters params = new Parameters();
+				params.putExtra(Debug.COMMAND, command);
+				if(command.isBreakpoint()) {
+					NotificationCenter.getInstance().postNotification(Notifications.ON_BREAK_BEFORE_POINT, params);
+					//NotificationCenter.getInstance().postNotification(Notifications.ON_BREAK_AFTER_POINT, params);
+				}
 				executionMonitor.tryExecution();
 				command.execute();
+				
+				if(command.isBreakpoint()) {	
+					NotificationCenter.getInstance().postNotification(Notifications.ON_BREAK_AFTER_POINT, params);
+				}
+				
 			}
 			
 		} catch(InterruptedException e) {
